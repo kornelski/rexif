@@ -24,7 +24,7 @@ match rexif::parse_file(&file_name) {
 
         for entry in &exif.entries {
             println!("    {}: {}",
-                    entry.tag_readable,
+                    entry.tag,
                     entry.value_more_readable);
         }
     },
@@ -39,4 +39,3 @@ The included tool `refixtool` accepts image file names as command-line
 parameters and prints EXIF data for them. The `src/main.rs` file is a
 good starting point to learn how to use the crate, then take a look into
 the `ExifEntry` struct.
-
