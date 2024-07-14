@@ -139,21 +139,21 @@ impl From<io::Error> for ExifError {
 impl fmt::Display for TagValue {
     #[cold]
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        match *self {
-            TagValue::Ascii(ref s) => f.write_str(s),
-            TagValue::U16(ref a) => write!(f, "{}", NumArray::new(a)),
-            TagValue::I16(ref a) => write!(f, "{}", NumArray::new(a)),
-            TagValue::U8(ref a) => write!(f, "{}", NumArray::new(a)),
-            TagValue::I8(ref a) => write!(f, "{}", NumArray::new(a)),
-            TagValue::U32(ref a) => write!(f, "{}", NumArray::new(a)),
-            TagValue::I32(ref a) => write!(f, "{}", NumArray::new(a)),
-            TagValue::F32(ref a) => write!(f, "{}", NumArray::new(a)),
-            TagValue::F64(ref a) => write!(f, "{}", NumArray::new(a)),
-            TagValue::URational(ref a) => write!(f, "{}", NumArray::new(a)),
-            TagValue::IRational(ref a) => write!(f, "{}", NumArray::new(a)),
-            TagValue::Undefined(ref a, _) => write!(f, "{}", NumArray::new(a)),
-            TagValue::Unknown(..) => f.write_str("<unknown blob>"),
-            TagValue::Invalid(..) => f.write_str("Invalid"),
+        match self {
+            TagValue::Ascii(s) => f.write_str(s),
+            TagValue::U16(a) => write!(f, "{}", NumArray::new(a)),
+            TagValue::I16(a) => write!(f, "{}", NumArray::new(a)),
+            TagValue::U8(a) => write!(f, "{}", NumArray::new(a)),
+            TagValue::I8(a) => write!(f, "{}", NumArray::new(a)),
+            TagValue::U32(a) => write!(f, "{}", NumArray::new(a)),
+            TagValue::I32(a) => write!(f, "{}", NumArray::new(a)),
+            TagValue::F32(a) => write!(f, "{}", NumArray::new(a)),
+            TagValue::F64(a) => write!(f, "{}", NumArray::new(a)),
+            TagValue::URational(a) => write!(f, "{}", NumArray::new(a)),
+            TagValue::IRational(a) => write!(f, "{}", NumArray::new(a)),
+            TagValue::Undefined(a, _) => write!(f, "{}", NumArray::new(a)),
+            TagValue::Unknown(a, _) => write!(f, "<unknown {}>", NumArray::new(a)),
+            TagValue::Invalid(a, ..) => write!(f, "<invalid {}>", NumArray::new(a)),
         }
     }
 }
