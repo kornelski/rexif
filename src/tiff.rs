@@ -18,11 +18,11 @@ pub(crate) fn parse_exif_entry(ifd: IfdEntry, warnings: &mut Vec<String>, kind: 
     };
 
     let e = ExifEntry {
+        value_more_readable: more_readable(ifd.tag, &value).unwrap_or(Cow::Borrowed("")),
         namespace: ifd.namespace,
         ifd,
         tag,
         unit: unit.into(),
-        value_more_readable: more_readable(&value).unwrap_or(Cow::Borrowed("")),
         value,
         kind,
     };

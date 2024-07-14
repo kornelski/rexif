@@ -2,17 +2,16 @@ use super::exifreadable::*;
 use super::types::*;
 use std::borrow::Cow;
 
-type ReadableFn = fn(&TagValue) -> Option<Cow<'static, str>>;
+type ReadableFn = fn(u16, &TagValue) -> Option<Cow<'static, str>>;
 
 /// Convert a numeric tag into `ExifTag` enumeration, and yields information about the tag. This information
 /// is used by the main body of the parser to sanity-check the tags found in image
 /// and make sure that EXIF tags have the right data types
 ///
 /// Returns (tag, unit, format, `min_count`, `max_count`, `more_readable`)
-pub fn tag_to_exif(f: u16) -> (ExifTag, &'static str, IfdFormat, i32, i32, ReadableFn)
+pub(crate) fn tag_to_exif(f: u16) -> (ExifTag, &'static str, IfdFormat, i32, i32, ReadableFn)
 {
     match f {
-
         0x010e =>
         (ExifTag::ImageDescription, "none", IfdFormat::Ascii,
         -1i32, -1i32, strpass),
@@ -407,6 +406,6 @@ pub fn tag_to_exif(f: u16) -> (ExifTag, &'static str, IfdFormat, i32, i32, Reada
 
         _ =>
         (ExifTag::UnknownToMe, "Unknown unit",
-        IfdFormat::Unknown, -1i32, -1i32, nop)
+        IfdFormat::Unknown, -1i32, -1i32, unknown)
     }
 }

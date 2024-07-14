@@ -339,6 +339,7 @@ pub enum Namespace {
 /// The non-standard namespaces exist to accomodate future parsing of the
 /// `MarkerNote` tag, that contains embedded manufacturer-specific tags.
 #[derive(Copy, Clone, Debug, PartialEq, Hash)]
+#[repr(u32)]
 pub enum ExifTag {
     /// Tag not recognized are partially parsed. The client may still try to interpret
     /// the tag by reading into the `IfdFormat` structure.
@@ -612,8 +613,7 @@ pub struct ExifEntry {
     /// Human-readable and "pretty" version of `value`.
     /// Enumerations and tuples are interpreted and combined. If `value`
     /// has a unit, it is also added.
-    /// If tag is `UnknownToMe`,
-    /// this member contains the same string as `value_readable`.
+    /// If tag is `UnknownToMe`, this member contains tag ID.
     pub value_more_readable: Cow<'static, str>,
     pub kind: IfdKind,
 }
