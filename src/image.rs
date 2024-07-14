@@ -56,7 +56,7 @@ pub(crate) fn detect_type(contents: &[u8]) -> FileType {
 
 /// Find the embedded TIFF in a JPEG image (that in turn contains the EXIF data)
 pub fn find_embedded_tiff_in_jpeg(contents: &[u8]) -> Result<(usize, usize), ExifError> {
-    let mut offset = 2 as usize;
+    let mut offset = 2_usize;
 
     while offset < contents.len() {
         if contents.len() < (offset + 4) {
@@ -69,8 +69,7 @@ pub fn find_embedded_tiff_in_jpeg(contents: &[u8]) -> Result<(usize, usize), Exi
 
         if marker < 0xff00 {
             return Err(ExifError::JpegWithoutExif(format!(
-                "Invalid marker {:x}",
-                marker
+                "Invalid marker {marker:x}"
             )));
         }
 

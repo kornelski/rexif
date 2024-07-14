@@ -1,19 +1,20 @@
-use crate::ifdformat::NumArray;
 use super::lowlevel::*;
 use super::types::*;
+use crate::ifdformat::NumArray;
 use std::error::Error;
-use std::fmt;
 use std::fmt::Display;
-use std::io;
+use std::{fmt, io};
 
 #[deprecated(note = "Use IfdFormat::new(n)")]
 #[doc(hidden)]
+#[must_use]
 pub fn ifdformat_new(n: u16) -> IfdFormat {
     IfdFormat::new(n)
 }
 
 impl IfdFormat {
-    /// Convert an IFD format code to the IfdFormat enumeration
+    /// Convert an IFD format code to the `IfdFormat` enumeration
+    #[must_use]
     pub fn new(code: u16) -> Self {
         match code {
             1 => IfdFormat::U8,
@@ -35,6 +36,7 @@ impl IfdFormat {
 
 impl IfdEntry {
     #[deprecated]
+    #[must_use]
     pub fn data_as_offset(&self) -> usize {
         self.try_data_as_offset().unwrap()
     }
@@ -44,6 +46,7 @@ impl IfdEntry {
     /// the IFD data area as an offset (i.e. when the tag is a Sub-IFD tag, or when
     /// there are more than 4 bytes of data and it would not fit within IFD).
     #[inline]
+    #[must_use]
     pub fn try_data_as_offset(&self) -> Option<usize> {
         read_u32(self.le, &self.ifd_data).map(|l| l as usize)
     }
@@ -51,6 +54,7 @@ impl IfdEntry {
     /// Returns the size of an individual element (e.g. U8=1, U16=2...). Every
     /// IFD entry contains an array of elements, so this is NOT the size of the
     /// whole entry!
+    #[must_use]
     pub fn size(&self) -> u8 {
         match self.format {
             IfdFormat::U8 => 1,
@@ -71,6 +75,7 @@ impl IfdEntry {
 
     /// Total length of the whole IFD entry (element count x element size)
     #[inline]
+    #[must_use]
     pub fn length(&self) -> usize {
         (self.size() as usize) * (self.count as usize)
     }
@@ -79,6 +84,7 @@ impl IfdEntry {
     /// data can be found elsewhere in the image (and IFD structure contains the
     /// data offset, instead of data).
     #[inline]
+    #[must_use]
     pub fn in_ifd(&self) -> bool {
         self.length() <= 4
     }
@@ -117,11 +123,11 @@ impl Display for ExifError {
         match *self {
             ExifError::IoError(ref e) => e.fmt(f),
             ExifError::FileTypeUnknown => f.write_str("File type unknown"),
-            ExifError::JpegWithoutExif(ref s) => write!(f, "JPEG without EXIF section: {}", s),
+            ExifError::JpegWithoutExif(ref s) => write!(f, "JPEG without EXIF section: {s}"),
             ExifError::TiffTruncated => f.write_str("TIFF truncated at start"),
-            ExifError::TiffBadPreamble(ref s) => write!(f, "TIFF with bad preamble: {}", s),
+            ExifError::TiffBadPreamble(ref s) => write!(f, "TIFF with bad preamble: {s}"),
             ExifError::IfdTruncated => f.write_str("TIFF IFD truncated"),
-            ExifError::ExifIfdTruncated(ref s) => write!(f, "TIFF Exif IFD truncated: {}", s),
+            ExifError::ExifIfdTruncated(ref s) => write!(f, "TIFF Exif IFD truncated: {s}"),
             ExifError::ExifIfdEntryNotFound => f.write_str("TIFF Exif IFD not found"),
             ExifError::UnsupportedNamespace => f.write_str("Only standar namespace can be serialized"),
             ExifError::MissingExifOffset => f.write_str("Expected to have seen ExifOffset tagin IFD0"),

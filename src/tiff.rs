@@ -1,14 +1,14 @@
-use std::borrow::Cow;
 use super::exif::*;
 use super::exifpost::*;
 use super::ifdformat::*;
 use super::lowlevel::*;
 use super::types::*;
+use std::borrow::Cow;
 
 type InExifResult = Result<(), ExifError>;
 
 /// Parse of raw IFD entry into EXIF data, if it is of a known type, and returns
-/// an ExifEntry object. If the tag is unknown, the enumeration is set to UnknownToMe,
+/// an `ExifEntry` object. If the tag is unknown, the enumeration is set to `UnknownToMe`,
 /// but the raw information of tag is still available in the ifd member.
 pub(crate) fn parse_exif_entry(ifd: IfdEntry, warnings: &mut Vec<String>, kind: IfdKind) -> ExifEntry {
     let (tag, unit, format, min_count, max_count, more_readable) = tag_to_exif(ifd.tag);
@@ -73,11 +73,11 @@ pub fn parse_ifd(
 
     for i in 0..count {
         let mut offset = (i as usize) * 12;
-        let tag = read_u16(le, &contents.get(offset..)?)?;
+        let tag = read_u16(le, contents.get(offset..)?)?;
         offset += 2;
-        let format = read_u16(le, &contents.get(offset..)?)?;
+        let format = read_u16(le, contents.get(offset..)?)?;
         offset += 2;
-        let count = read_u32(le, &contents.get(offset..)?)?;
+        let count = read_u32(le, contents.get(offset..)?)?;
         offset += 4;
         let data = contents.get(offset..offset + 4)?.to_vec();
 
@@ -103,7 +103,7 @@ pub fn parse_ifd(
     Some((entries, next_ifd))
 }
 
-/// Deep parse of IFD that grabs EXIF data from IFD0, SubIFD and GPS IFD
+/// Deep parse of IFD that grabs EXIF data from IFD0, `SubIFD` and GPS IFD
 fn parse_exif_ifd(
     le: bool,
     contents: &[u8],
@@ -122,7 +122,7 @@ fn parse_exif_ifd(
 
     let count = read_u16(
         le,
-        &contents
+        contents
             .get(offset..)
             .ok_or(ExifError::IfdTruncated)?,
     ).ok_or(ExifError::IfdTruncated)?;
@@ -152,7 +152,7 @@ fn parse_exif_ifd(
     Ok(())
 }
 
-/// Parses IFD0 and looks for SubIFD or GPS IFD within IFD0
+/// Parses IFD0 and looks for `SubIFD` or GPS IFD within IFD0
 pub fn parse_ifds(
     le: bool,
     ifd0_offset: usize,
@@ -165,7 +165,7 @@ pub fn parse_ifds(
     // fills exif_entries with data from IFD0
 
     match parse_exif_ifd(le, contents, offset, &mut exif_entries, warnings, IfdKind::Ifd0) {
-        Ok(_) => true,
+        Ok(()) => true,
         Err(e) => return Err(e),
     };
 
@@ -174,7 +174,7 @@ pub fn parse_ifds(
 
     let count = read_u16(
         le,
-        &contents
+        contents
             .get(offset..offset + 2)
             .ok_or(ExifError::IfdTruncated)?,
     ).ok_or(ExifError::IfdTruncated)?;
@@ -236,5 +236,5 @@ pub fn parse_tiff(contents: &[u8], warnings: &mut Vec<String>) -> (ExifEntryResu
 
     let offset = read_u32(le, &contents[4..]).unwrap() as usize;
 
-    (parse_ifds(le, offset, &contents, warnings), le)
+    (parse_ifds(le, offset, contents, warnings), le)
 }

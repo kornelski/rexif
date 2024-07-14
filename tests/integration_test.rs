@@ -19,7 +19,7 @@ fn check_tags(entries: &Vec<ExifEntry>, expected_tags: Vec<ExifTag>) {
 #[test]
 fn test_parse_simple_morotola_jpeg() {
     let exif = rexif::parse_file("./tests/img/profile.jpg");
-    assert!(exif.is_ok(), "{:?}", exif);
+    assert!(exif.is_ok(), "{exif:?}");
 
     let exif = exif.unwrap();
     assert_eq!(exif.mime, "image/jpeg");
@@ -37,7 +37,7 @@ fn test_parse_simple_morotola_jpeg() {
     check_tags(&exif.entries, expected_tags);
 
     assert!(exif.entries.iter().all(|e| e.namespace == Namespace::Standard),
-            "Expected all tags to be from the standard namespace")
+            "Expected all tags to be from the standard namespace");
 }
 
 #[test]
@@ -46,14 +46,14 @@ fn test_parse_jpeg_without_metadata() {
     if let Err(ExifError::FileTypeUnknown) = exif {
         // succeed
     } else {
-        panic!("Expected ExifError::FileTypeUnknown, found {:?}", exif)
+        panic!("Expected ExifError::FileTypeUnknown, found {exif:?}")
     }
 }
 
 #[test]
 fn test_parse_jpeg_with_gps() -> Result<(), std::io::Error> {
     let exif = rexif::parse_file("./tests/img/jpg/gps/DSCN0029.jpg");
-    assert!(exif.is_ok(), "{:?}", exif);
+    assert!(exif.is_ok(), "{exif:?}");
 
     let exif = exif.unwrap();
     assert_eq!(exif.mime, "image/jpeg");
@@ -73,7 +73,7 @@ fn test_parse_jpeg_with_gps() -> Result<(), std::io::Error> {
     ];
 
     for t in expected_tags {
-        assert!(exif.entries.iter().find(|&e| e.tag == t).is_some(), "Could not find exif tag: {:?}", t);
+        assert!(exif.entries.iter().any(|e| e.tag == t), "Could not find exif tag: {t:?}");
     }
 
     Ok(())

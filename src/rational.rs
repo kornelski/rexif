@@ -10,8 +10,9 @@ pub struct IRational {
 
 impl IRational {
     /// Floating point value (numerator divided by denominator)
+    #[must_use]
     pub fn value(&self) -> f64 {
-        (self.numerator as f64) / (self.denominator as f64)
+        f64::from(self.numerator) / f64::from(self.denominator)
     }
 }
 
@@ -30,6 +31,7 @@ pub struct URational {
 
 impl URational {
     /// Floating point value (numerator divided by denominator)
+    #[must_use]
     pub fn value(&self) -> f64 {
         f64::from(self.numerator) / f64::from(self.denominator)
     }

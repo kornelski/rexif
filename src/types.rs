@@ -1,8 +1,7 @@
-use std::borrow::Cow;
-use std::fmt;
-use std::io;
 use super::ifdformat::tag_value_eq;
-use super::rational::*;
+use super::rational::{IRational, URational};
+use std::borrow::Cow;
+use std::{fmt, io};
 
 /// The value of the Exif header.
 pub const EXIF_HEADER: &[u8] = &[b'E', b'x', b'i', b'f', 0x00, 0x00];
@@ -22,12 +21,9 @@ pub struct ExifData {
 }
 
 impl ExifData {
+    #[must_use]
     pub fn new(mime: &'static str, entries: Vec<ExifEntry>, le: bool) -> Self {
-        ExifData {
-            mime,
-            entries,
-            le,
-        }
+        ExifData { mime, entries, le }
     }
 }
 
@@ -236,7 +232,7 @@ pub enum ExifError {
 #[derive(Clone, Debug)]
 pub struct IfdEntry {
     /// Namespace of the entry. Standard is a tag found in normal TIFF IFD structure,
-    /// other namespaces are entries found e.g. within MarkerNote blobs that are
+    /// other namespaces are entries found e.g. within `MarkerNote` blobs that are
     /// manufacturer-specific.
     pub namespace: Namespace,
     /// IFD tag value, may or not be an EXIF tag
@@ -251,7 +247,7 @@ pub struct IfdEntry {
     /// Raw data contained within the IFD structure. If count * sizeof(format) >= 4,
     /// this item contains the offset where the actual data can be found
     pub ifd_data: Vec<u8>,
-    /// Raw data contained outside of the IFD structure and pointed by ifd_data,
+    /// Raw data contained outside of the IFD structure and pointed by `ifd_data`,
     /// if data would not fit within the IFD structure
     pub ext_data: Vec<u8>,
     /// If true, integer and offset formats must be parsed from raw data as little-endian.
@@ -324,7 +320,7 @@ impl IfdEntry {
 
 /// Enumeration that represent EXIF tag namespaces. Namespaces exist to
 /// accomodate future parsing of the manufacturer-specific tags embedded within
-/// the MarkerNote tag.
+/// the `MarkerNote` tag.
 #[derive(Copy, Clone, Debug, PartialEq)]
 pub enum Namespace {
     Standard = 0x0000,
@@ -341,11 +337,11 @@ pub enum Namespace {
 /// On the other hand, the namespace code is arbitrary, it only matches
 /// the `Namespace` enumeration. The namespace is 0 for standard Exif tags.
 /// The non-standard namespaces exist to accomodate future parsing of the
-/// MarkerNote tag, that contains embedded manufacturer-specific tags.
+/// `MarkerNote` tag, that contains embedded manufacturer-specific tags.
 #[derive(Copy, Clone, Debug, PartialEq, Hash)]
 pub enum ExifTag {
     /// Tag not recognized are partially parsed. The client may still try to interpret
-    /// the tag by reading into the IfdFormat structure.
+    /// the tag by reading into the `IfdFormat` structure.
     UnknownToMe = 0x0000_ffff,
     ImageDescription = 0x0000_010e,
     Make = 0x0000_010f,
@@ -593,7 +589,7 @@ pub enum IfdFormat {
 pub struct ExifEntry {
     /// Namespace of the tag. If Standard (0x0000), it is an EXIF tag defined in the
     /// official standard. Other namespaces accomodate manufacturer-specific tags that
-    /// may be embedded in MarkerNote blob tag.
+    /// may be embedded in `MarkerNote` blob tag.
     pub namespace: Namespace,
     /// Low-level IFD entry that contains the EXIF tag. The client may look into this
     /// structure to get tag's raw data, or to parse the tag herself if `tag` is `UnknownToMe`.
@@ -691,12 +687,12 @@ impl TagValue {
     /// Out of bounds indexes and invalid types return `None`
     pub fn to_i64(&self, index: usize) -> Option<i64> {
         match *self {
-            TagValue::U8(ref v) => v.get(index).cloned().map(From::from),
-            TagValue::U16(ref v) => v.get(index).cloned().map(From::from),
-            TagValue::U32(ref v) => v.get(index).cloned().map(From::from),
-            TagValue::I8(ref v) => v.get(index).cloned().map(From::from),
-            TagValue::I16(ref v) => v.get(index).cloned().map(From::from),
-            TagValue::I32(ref v) => v.get(index).cloned().map(From::from),
+            TagValue::U8(ref v) => v.get(index).copied().map(From::from),
+            TagValue::U16(ref v) => v.get(index).copied().map(From::from),
+            TagValue::U32(ref v) => v.get(index).copied().map(From::from),
+            TagValue::I8(ref v) => v.get(index).copied().map(From::from),
+            TagValue::I16(ref v) => v.get(index).copied().map(From::from),
+            TagValue::I32(ref v) => v.get(index).copied().map(From::from),
             _ => None,
         }
     }
@@ -705,16 +701,16 @@ impl TagValue {
     /// Out of bounds indexes and invalid types return `None`
     pub fn to_f64(&self, index: usize) -> Option<f64> {
         match *self {
-            TagValue::U8(ref v) => v.get(index).cloned().map(From::from),
-            TagValue::U16(ref v) => v.get(index).cloned().map(From::from),
-            TagValue::U32(ref v) => v.get(index).cloned().map(From::from),
-            TagValue::I8(ref v) => v.get(index).cloned().map(From::from),
-            TagValue::I16(ref v) => v.get(index).cloned().map(From::from),
-            TagValue::I32(ref v) => v.get(index).cloned().map(From::from),
-            TagValue::F32(ref v) => v.get(index).cloned().map(From::from),
-            TagValue::F64(ref v) => v.get(index).cloned().map(From::from),
-            TagValue::IRational(ref v) => v.get(index).cloned().map(|v| v.value()),
-            TagValue::URational(ref v) => v.get(index).cloned().map(|v| v.value()),
+            TagValue::U8(ref v) => v.get(index).copied().map(From::from),
+            TagValue::U16(ref v) => v.get(index).copied().map(From::from),
+            TagValue::U32(ref v) => v.get(index).copied().map(From::from),
+            TagValue::I8(ref v) => v.get(index).copied().map(From::from),
+            TagValue::I16(ref v) => v.get(index).copied().map(From::from),
+            TagValue::I32(ref v) => v.get(index).copied().map(From::from),
+            TagValue::F32(ref v) => v.get(index).copied().map(From::from),
+            TagValue::F64(ref v) => v.get(index).copied().map(From::from),
+            TagValue::IRational(ref v) => v.get(index).copied().map(|v| v.value()),
+            TagValue::URational(ref v) => v.get(index).copied().map(|v| v.value()),
             _ => None,
         }
     }

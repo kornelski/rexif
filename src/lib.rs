@@ -49,7 +49,7 @@ mod image;
 use self::image::*;
 mod ifdformat;
 mod tiff;
-use self::tiff::*;
+use self::tiff::parse_tiff;
 mod exif;
 mod exifpost;
 mod exifreadable;
@@ -60,7 +60,7 @@ mod exifreadable;
 /// Prints warnings to stderr.
 pub fn parse_buffer(contents: &[u8]) -> ExifResult {
     let (res, warnings) = parse_buffer_quiet(contents);
-    warnings.into_iter().for_each(|w| eprintln!("{}", w));
+    warnings.into_iter().for_each(|w| eprintln!("{w}"));
     res
 }
 
@@ -75,9 +75,7 @@ pub fn parse_buffer_quiet(contents: &[u8]) -> (ExifResult, Vec<String>) {
         FileType::Unknown => return (Err(ExifError::FileTypeUnknown), warnings),
         FileType::TIFF => parse_tiff(contents, &mut warnings),
         FileType::JPEG => {
-            match find_embedded_tiff_in_jpeg(contents).and_then(|(offset, size)| {
-                Ok(parse_tiff(&contents[offset..offset + size], &mut warnings))
-            }) {
+            match find_embedded_tiff_in_jpeg(contents).map(|(offset, size)| parse_tiff(&contents[offset..offset + size], &mut warnings)) {
                 Ok(r) => r,
                 Err(e) => return (Err(e), warnings)
             }

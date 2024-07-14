@@ -1,5 +1,4 @@
-use std::env;
-use std::process;
+use std::{env, process};
 
 use rexif::ExifTag;
 
@@ -12,7 +11,7 @@ fn main() {
         process::exit(2);
     }
     for arg in &args[1..] {
-        match rexif::parse_file(&arg) {
+        match rexif::parse_file(arg) {
             Ok(exif) => {
                 for entry in &exif.entries {
                     if entry.tag == ExifTag::UnknownToMe {
@@ -24,10 +23,10 @@ fn main() {
                         println!("\t{}: {}", entry.tag, entry.value_more_readable);
                     }
                 }
-            }
+            },
             Err(e) => {
                 eprintln!("Error in {}: {}", &arg, e);
-            }
+            },
         }
     }
 }
