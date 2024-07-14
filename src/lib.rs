@@ -29,7 +29,7 @@
 //!         }
 //!     },
 //!     Err(e) => {
-//!         print!("Error in {}: {}", &file_name, e)
+//!         eprintln!("Error in {}: {}", &file_name, e)
 //!     }
 //! }
 //! ```
