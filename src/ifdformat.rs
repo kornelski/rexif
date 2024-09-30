@@ -110,8 +110,8 @@ fn vec_cmp<F: Float>(va: &[F], vb: &[F]) -> bool {
 /// values at the same positions).
 pub(crate) fn tag_value_eq(left: &TagValue, right: &TagValue) -> bool {
     match (left, right) {
-        (TagValue::F32(x), TagValue::F32(y)) => vec_cmp(&x, &y),
-        (TagValue::F64(x), TagValue::F64(y)) => vec_cmp(&x, &y),
+        (TagValue::F32(x), TagValue::F32(y)) => vec_cmp(x, y),
+        (TagValue::F64(x), TagValue::F64(y)) => vec_cmp(x, y),
         (x, y) => x == y,
     }
 }
