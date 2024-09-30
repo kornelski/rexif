@@ -75,9 +75,11 @@ pub fn parse_buffer_quiet(contents: &[u8]) -> (ExifResult, Vec<String>) {
         FileType::Unknown => return (Err(ExifError::FileTypeUnknown), warnings),
         FileType::TIFF => parse_tiff(contents, &mut warnings),
         FileType::JPEG => {
-            match find_embedded_tiff_in_jpeg(contents).map(|(offset, size)| parse_tiff(&contents[offset..offset + size], &mut warnings)) {
+            match find_embedded_tiff_in_jpeg(contents)
+                .map(|(offset, size)| parse_tiff(&contents[offset..offset + size], &mut warnings))
+            {
                 Ok(r) => r,
-                Err(e) => return (Err(e), warnings)
+                Err(e) => return (Err(e), warnings),
             }
         }
     };
@@ -86,7 +88,7 @@ pub fn parse_buffer_quiet(contents: &[u8]) -> (ExifResult, Vec<String>) {
         entries.map(|entries| ExifData {
             mime: mime.as_str(),
             entries,
-            le
+            le,
         }),
         warnings,
     )

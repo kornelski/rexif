@@ -10,7 +10,11 @@ type InExifResult = Result<(), ExifError>;
 /// Parse of raw IFD entry into EXIF data, if it is of a known type, and returns
 /// an `ExifEntry` object. If the tag is unknown, the enumeration is set to `UnknownToMe`,
 /// but the raw information of tag is still available in the ifd member.
-pub(crate) fn parse_exif_entry(ifd: IfdEntry, warnings: &mut Vec<String>, kind: IfdKind) -> ExifEntry {
+pub(crate) fn parse_exif_entry(
+    ifd: IfdEntry,
+    warnings: &mut Vec<String>,
+    kind: IfdKind,
+) -> ExifEntry {
     let (tag, unit, format, min_count, max_count, more_readable) = tag_to_exif(ifd.tag);
     let value = match tag_value_new(&ifd) {
         Some(v) => v,
@@ -67,7 +71,7 @@ pub fn parse_ifd(
     subifd: bool,
     le: bool,
     count: u16,
-    contents: &[u8]
+    contents: &[u8],
 ) -> Option<(Vec<IfdEntry>, usize)> {
     let mut entries: Vec<IfdEntry> = Vec::new();
 
@@ -115,17 +119,16 @@ fn parse_exif_ifd(
     let mut offset = ioffset;
 
     if contents.len() < (offset + 2) {
-        return Err(ExifError::ExifIfdTruncated(
-            format!("Truncated {:?} at dir entry count ({} < {})", kind, contents.len(), (offset + 2)),
-        ));
+        return Err(ExifError::ExifIfdTruncated(format!(
+            "Truncated {:?} at dir entry count ({} < {})",
+            kind,
+            contents.len(),
+            (offset + 2)
+        )));
     }
 
-    let count = read_u16(
-        le,
-        contents
-            .get(offset..)
-            .ok_or(ExifError::IfdTruncated)?,
-    ).ok_or(ExifError::IfdTruncated)?;
+    let count = read_u16(le, contents.get(offset..).ok_or(ExifError::IfdTruncated)?)
+        .ok_or(ExifError::IfdTruncated)?;
     let ifd_length = (count as usize) * 12;
     offset += 2;
 
@@ -164,12 +167,19 @@ pub fn parse_ifds(
 
     // fills exif_entries with data from IFD0
 
-    match parse_exif_ifd(le, contents, offset, &mut exif_entries, warnings, IfdKind::Ifd0) {
+    match parse_exif_ifd(
+        le,
+        contents,
+        offset,
+        &mut exif_entries,
+        warnings,
+        IfdKind::Ifd0,
+    ) {
         Ok(()) => true,
         Err(e) => return Err(e),
     };
 
-    // at this point we knot that IFD0 is good
+    // at this point we know that IFD0 is good
     // looks for SubIFD (EXIF)
 
     let count = read_u16(
@@ -177,7 +187,8 @@ pub fn parse_ifds(
         contents
             .get(offset..offset + 2)
             .ok_or(ExifError::IfdTruncated)?,
-    ).ok_or(ExifError::IfdTruncated)?;
+    )
+    .ok_or(ExifError::IfdTruncated)?;
     let ifd_length = (count as usize) * 12 + 4;
     offset += 2;
 
@@ -203,7 +214,14 @@ pub fn parse_ifds(
                 "Exif SubIFD goes past EOF".to_string(),
             ));
         }
-        parse_exif_ifd(le, contents, exif_offset, &mut exif_entries, warnings, ifd_kind)?;
+        parse_exif_ifd(
+            le,
+            contents,
+            exif_offset,
+            &mut exif_entries,
+            warnings,
+            ifd_kind,
+        )?;
     }
 
     for n in 0..exif_entries.len() {

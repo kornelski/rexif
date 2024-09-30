@@ -68,7 +68,7 @@ impl ExifData {
                 IfdKind::Gps => gps.push(e),
                 _ => {
                     // XXX Silently ignore Makernote and Interoperability IFDs
-                },
+                }
             }
         }
 
@@ -126,7 +126,11 @@ impl ExifData {
             };
 
             serialized.extend(patch.data);
-            for (place, byte) in serialized.iter_mut().skip(patch.offset_pos as usize).zip(bytes.iter()) {
+            for (place, byte) in serialized
+                .iter_mut()
+                .skip(patch.offset_pos as usize)
+                .zip(bytes.iter())
+            {
                 *place = *byte;
             }
         }
@@ -189,7 +193,11 @@ impl ExifData {
                 (serialized.len() as u32).to_be_bytes()
             };
             serialized.extend(patch.data);
-            for (place, byte) in serialized.iter_mut().skip(patch.offset_pos as usize).zip(bytes.iter()) {
+            for (place, byte) in serialized
+                .iter_mut()
+                .skip(patch.offset_pos as usize)
+                .zip(bytes.iter())
+            {
                 *place = *byte;
             }
         }
@@ -206,10 +214,7 @@ pub(super) struct Patch<'a> {
 
 impl Patch<'_> {
     pub fn new(offset_pos: u32, data: &[u8]) -> Patch {
-        Patch {
-            offset_pos,
-            data,
-        }
+        Patch { offset_pos, data }
     }
 }
 
@@ -263,14 +268,22 @@ pub struct IfdEntry {
 // entries should still be considered equal.
 impl PartialEq for IfdEntry {
     fn eq(&self, other: &IfdEntry) -> bool {
-        let data_eq = if self.in_ifd() && !self.tag == ExifTag::ExifOffset as u16 && !self.tag == ExifTag::GPSOffset as u16 {
-            self.data == other.data && self.ifd_data == other.ifd_data && self.ext_data == other.ext_data
+        let data_eq = if self.in_ifd()
+            && !self.tag == ExifTag::ExifOffset as u16
+            && !self.tag == ExifTag::GPSOffset as u16
+        {
+            self.data == other.data
+                && self.ifd_data == other.ifd_data
+                && self.ext_data == other.ext_data
         } else {
             true
         };
 
-        self.namespace == other.namespace && self.tag == other.tag && self.count == other.count &&
-            data_eq && self.le == other.le
+        self.namespace == other.namespace
+            && self.tag == other.tag
+            && self.count == other.count
+            && data_eq
+            && self.le == other.le
     }
 }
 
@@ -282,7 +295,7 @@ impl IfdEntry {
     ) -> Result<(), ExifError> {
         // Serialize the entry
         if self.namespace != Namespace::Standard {
-            return Err(ExifError::UnsupportedNamespace)
+            return Err(ExifError::UnsupportedNamespace);
         }
 
         // Serialize the tag (2 bytes)
@@ -625,12 +638,17 @@ impl PartialEq for ExifEntry {
         let value_eq = match self.tag {
             ExifTag::ExifOffset | ExifTag::GPSOffset => true,
             _ => {
-                self.value_more_readable == other.value_more_readable && tag_value_eq(&self.value, &other.value)
-            },
+                self.value_more_readable == other.value_more_readable
+                    && tag_value_eq(&self.value, &other.value)
+            }
         };
 
-        self.namespace == other.namespace && self.ifd == other.ifd && self.tag == other.tag &&
-            self.unit == other.unit && self.kind == other.kind && value_eq
+        self.namespace == other.namespace
+            && self.ifd == other.ifd
+            && self.tag == other.tag
+            && self.unit == other.unit
+            && self.kind == other.kind
+            && value_eq
     }
 }
 

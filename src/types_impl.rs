@@ -114,8 +114,7 @@ impl IfdEntry {
     }
 }
 
-impl Error for ExifError {
-}
+impl Error for ExifError {}
 
 impl Display for ExifError {
     #[cold]
@@ -129,8 +128,12 @@ impl Display for ExifError {
             ExifError::IfdTruncated => f.write_str("TIFF IFD truncated"),
             ExifError::ExifIfdTruncated(ref s) => write!(f, "TIFF Exif IFD truncated: {s}"),
             ExifError::ExifIfdEntryNotFound => f.write_str("TIFF Exif IFD not found"),
-            ExifError::UnsupportedNamespace => f.write_str("Only standar namespace can be serialized"),
-            ExifError::MissingExifOffset => f.write_str("Expected to have seen ExifOffset tagin IFD0"),
+            ExifError::UnsupportedNamespace => {
+                f.write_str("Only standar namespace can be serialized")
+            }
+            ExifError::MissingExifOffset => {
+                f.write_str("Expected to have seen ExifOffset tagin IFD0")
+            }
         }
     }
 }

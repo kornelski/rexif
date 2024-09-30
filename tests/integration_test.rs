@@ -36,8 +36,12 @@ fn test_parse_simple_morotola_jpeg() {
     ];
     check_tags(&exif.entries, expected_tags);
 
-    assert!(exif.entries.iter().all(|e| e.namespace == Namespace::Standard),
-            "Expected all tags to be from the standard namespace");
+    assert!(
+        exif.entries
+            .iter()
+            .all(|e| e.namespace == Namespace::Standard),
+        "Expected all tags to be from the standard namespace"
+    );
 }
 
 #[test]
@@ -73,7 +77,10 @@ fn test_parse_jpeg_with_gps() -> Result<(), std::io::Error> {
     ];
 
     for t in expected_tags {
-        assert!(exif.entries.iter().any(|e| e.tag == t), "Could not find exif tag: {t:?}");
+        assert!(
+            exif.entries.iter().any(|e| e.tag == t),
+            "Could not find exif tag: {t:?}"
+        );
     }
 
     Ok(())
@@ -149,5 +156,8 @@ fn test_tiff_exif_serialization() -> Result<(), std::io::Error> {
 fn test_serialize_empty() {
     let exif = ExifData::new("image/jpeg", vec![], false);
     let tiff_header = [b'M', b'M', 0, 42, 0, 0, 0, 8, 0, 0, 0, 0, 0, 0];
-    assert_eq!(exif.serialize().unwrap(), [EXIF_HEADER, &tiff_header].concat());
+    assert_eq!(
+        exif.serialize().unwrap(),
+        [EXIF_HEADER, &tiff_header].concat()
+    );
 }
