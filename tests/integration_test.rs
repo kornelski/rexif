@@ -11,7 +11,7 @@ const TIFF_PATTERN: &str = "*.tiff";
 const APP_MARKER: &[u8] = &[0xff, 0xd8, 0xff, 0xe1];
 
 #[cfg(test)]
-fn check_tags(entries: &Vec<ExifEntry>, expected_tags: Vec<ExifTag>) {
+fn check_tags(entries: &[ExifEntry], expected_tags: Vec<ExifTag>) {
     let tags: Vec<ExifTag> = entries.iter().map(|entry| entry.tag).collect();
     assert_eq!(tags, expected_tags);
 }
@@ -43,7 +43,7 @@ fn test_parse_simple_morotola_jpeg() {
 #[test]
 fn test_parse_jpeg_without_metadata() {
     let exif = rexif::parse_file("./tests/img/invalid/no_exif.jpg");
-    if let Err(ExifError::FileTypeUnknown) = exif {
+    if matches!(exif, Err(ExifError::FileTypeUnknown)) {
         // succeed
     } else {
         panic!("Expected ExifError::FileTypeUnknown, found {exif:?}")

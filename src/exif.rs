@@ -9,8 +9,7 @@ type ReadableFn = fn(u16, &TagValue) -> Option<Cow<'static, str>>;
 /// and make sure that EXIF tags have the right data types
 ///
 /// Returns (tag, unit, format, `min_count`, `max_count`, `more_readable`)
-pub(crate) fn tag_to_exif(f: u16) -> (ExifTag, &'static str, IfdFormat, i32, i32, ReadableFn)
-{
+pub(crate) fn tag_to_exif(f: u16) -> (ExifTag, &'static str, IfdFormat, i32, i32, ReadableFn) {
     match f {
         0x010e =>
         (ExifTag::ImageDescription, "none", IfdFormat::Ascii,

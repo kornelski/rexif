@@ -19,17 +19,17 @@ impl<T: Display, I: IntoIterator<Item = T>> Display for NumArray<I> {
         let iter = self.0.borrow_mut().take().unwrap();
         for number in iter {
             if !first {
-                write!(f, ", {}", number)?;
+                write!(f, ", {number}")?;
                 first = false;
             } else {
-                write!(f, "{}", number)?;
+                write!(f, "{number}")?;
             }
         }
         Ok(())
     }
 }
 
-/// Convert a IfdEntry into a tuple of TagValue
+/// Convert a `IfdEntry` into a tuple of `TagValue`
 pub(crate) fn tag_value_new(f: &IfdEntry) -> Option<TagValue> {
     Some(match f.format {
         IfdFormat::Ascii => {
@@ -110,8 +110,8 @@ fn vec_cmp<F: Float>(va: &[F], vb: &[F]) -> bool {
 /// values at the same positions).
 pub(crate) fn tag_value_eq(left: &TagValue, right: &TagValue) -> bool {
     match (left, right) {
-        (TagValue::F32(x), TagValue::F32(y)) => vec_cmp(&x, &y),
-        (TagValue::F64(x), TagValue::F64(y)) => vec_cmp(&x, &y),
+        (TagValue::F32(x), TagValue::F32(y)) => vec_cmp(x, y),
+        (TagValue::F64(x), TagValue::F64(y)) => vec_cmp(x, y),
         (x, y) => x == y,
     }
 }

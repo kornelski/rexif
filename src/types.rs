@@ -23,7 +23,7 @@ pub struct ExifData {
 impl ExifData {
     #[must_use]
     pub fn new(mime: &'static str, entries: Vec<ExifEntry>, le: bool) -> Self {
-        ExifData { mime, entries, le }
+        Self { mime, entries, le }
     }
 }
 
@@ -205,7 +205,8 @@ pub(super) struct Patch<'a> {
 }
 
 impl Patch<'_> {
-    pub fn new(offset_pos: u32, data: &[u8]) -> Patch {
+    #[must_use]
+    pub const fn new(offset_pos: u32, data: &[u8]) -> Patch {
         Patch {
             offset_pos,
             data,
@@ -262,7 +263,7 @@ pub struct IfdEntry {
 // and two Exif entries may contain the same data, but at different offsets. In that case, the
 // entries should still be considered equal.
 impl PartialEq for IfdEntry {
-    fn eq(&self, other: &IfdEntry) -> bool {
+    fn eq(&self, other: &Self) -> bool {
         let data_eq = if self.in_ifd() && !self.tag == ExifTag::ExifOffset as u16 && !self.tag == ExifTag::GPSOffset as u16 {
             self.data == other.data && self.ifd_data == other.ifd_data && self.ext_data == other.ext_data
         } else {
@@ -282,7 +283,7 @@ impl IfdEntry {
     ) -> Result<(), ExifError> {
         // Serialize the entry
         if self.namespace != Namespace::Standard {
-            return Err(ExifError::UnsupportedNamespace)
+            return Err(ExifError::UnsupportedNamespace);
         }
 
         // Serialize the tag (2 bytes)
@@ -619,7 +620,7 @@ pub struct ExifEntry {
 }
 
 impl PartialEq for ExifEntry {
-    fn eq(&self, other: &ExifEntry) -> bool {
+    fn eq(&self, other: &Self) -> bool {
         // If the ExifEntry is an ExifOffset or a GPSOffset, the value it contains is an offset.
         // Two entries can be equal even if they do not point to the same offset.
         let value_eq = match self.tag {

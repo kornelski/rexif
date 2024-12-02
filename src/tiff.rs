@@ -130,9 +130,7 @@ fn parse_exif_ifd(
     offset += 2;
 
     if contents.len() < (offset + ifd_length) {
-        return Err(ExifError::ExifIfdTruncated(
-            "Truncated at dir listing".to_string(),
-        ));
+        return Err(ExifError::ExifIfdTruncated("Truncated at dir listing".into()));
     }
 
     let ifd_content = &contents
@@ -199,9 +197,7 @@ pub fn parse_ifds(
 
         let exif_offset = entry.try_data_as_offset().unwrap_or(!0);
         if contents.len() < exif_offset {
-            return Err(ExifError::ExifIfdTruncated(
-                "Exif SubIFD goes past EOF".to_string(),
-            ));
+            return Err(ExifError::ExifIfdTruncated("Exif SubIFD goes past EOF".into()));
         }
         parse_exif_ifd(le, contents, exif_offset, &mut exif_entries, warnings, ifd_kind)?;
     }
@@ -227,10 +223,7 @@ pub fn parse_tiff(contents: &[u8], warnings: &mut Vec<String>) -> (ExifEntryResu
     } else if contents[0] == b'M' && contents[1] == b'M' && contents[2] == 0 && contents[3] == 42 {
         /* TIFF big-endian */
     } else {
-        let err = format!(
-            "Preamble is {:x} {:x} {:x} {:x}",
-            contents[0], contents[1], contents[2], contents[3]
-        );
+        let err = format!("Preamble is {:x} {:x} {:x} {:x}", contents[0], contents[1], contents[2], contents[3]);
         return (Err(ExifError::TiffBadPreamble(err)), false);
     }
 

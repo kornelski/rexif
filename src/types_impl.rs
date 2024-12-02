@@ -15,21 +15,21 @@ pub fn ifdformat_new(n: u16) -> IfdFormat {
 impl IfdFormat {
     /// Convert an IFD format code to the `IfdFormat` enumeration
     #[must_use]
-    pub fn new(code: u16) -> Self {
+    pub const fn new(code: u16) -> Self {
         match code {
-            1 => IfdFormat::U8,
-            2 => IfdFormat::Ascii,
-            3 => IfdFormat::U16,
-            4 => IfdFormat::U32,
-            5 => IfdFormat::URational,
-            6 => IfdFormat::I8,
-            7 => IfdFormat::Undefined,
-            8 => IfdFormat::I16,
-            9 => IfdFormat::I32,
-            10 => IfdFormat::IRational,
-            11 => IfdFormat::F32,
-            12 => IfdFormat::F64,
-            _ => IfdFormat::Unknown,
+            1 => Self::U8,
+            2 => Self::Ascii,
+            3 => Self::U16,
+            4 => Self::U32,
+            5 => Self::URational,
+            6 => Self::I8,
+            7 => Self::Undefined,
+            8 => Self::I16,
+            9 => Self::I32,
+            10 => Self::IRational,
+            11 => Self::F32,
+            12 => Self::F64,
+            _ => Self::Unknown,
         }
     }
 }
@@ -55,7 +55,7 @@ impl IfdEntry {
     /// IFD entry contains an array of elements, so this is NOT the size of the
     /// whole entry!
     #[must_use]
-    pub fn size(&self) -> u8 {
+    pub const fn size(&self) -> u8 {
         match self.format {
             IfdFormat::U8 => 1,
             IfdFormat::Ascii => 1,
@@ -137,8 +137,8 @@ impl Display for ExifError {
 
 impl From<io::Error> for ExifError {
     #[cold]
-    fn from(err: io::Error) -> ExifError {
-        ExifError::IoError(err)
+    fn from(err: io::Error) -> Self {
+        Self::IoError(err)
     }
 }
 

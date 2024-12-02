@@ -60,44 +60,32 @@ pub fn find_embedded_tiff_in_jpeg(contents: &[u8]) -> Result<(usize, usize), Exi
 
     while offset < contents.len() {
         if contents.len() < (offset + 4) {
-            return Err(ExifError::JpegWithoutExif(
-                "JPEG truncated in marker header".to_string(),
-            ));
+            return Err(ExifError::JpegWithoutExif("JPEG truncated in marker header".into()));
         }
 
         let marker: u16 = u16::from(contents[offset]) * 256 + u16::from(contents[offset + 1]);
 
         if marker < 0xff00 {
-            return Err(ExifError::JpegWithoutExif(format!(
-                "Invalid marker {marker:x}"
-            )));
+            return Err(ExifError::JpegWithoutExif(format!("Invalid marker {marker:x}")));
         }
 
         offset += 2;
         let size = (contents[offset] as usize) * 256 + (contents[offset + 1] as usize);
 
         if size < 2 {
-            return Err(ExifError::JpegWithoutExif(
-                "JPEG marker size must be at least 2 (because of the size word)".to_string(),
-            ));
+            return Err(ExifError::JpegWithoutExif("JPEG marker size must be at least 2 (because of the size word)".into()));
         }
         if contents.len() < (offset + size) {
-            return Err(ExifError::JpegWithoutExif(
-                "JPEG truncated in marker body".to_string(),
-            ));
+            return Err(ExifError::JpegWithoutExif("JPEG truncated in marker body".into()));
         }
 
         if marker == 0xffe1 {
             if size < 8 {
-                return Err(ExifError::JpegWithoutExif(
-                    "EXIF preamble truncated".to_string(),
-                ));
+                return Err(ExifError::JpegWithoutExif("EXIF preamble truncated".into()));
             }
 
             if contents[offset + 2..offset + 8] != [b'E', b'x', b'i', b'f', 0, 0] {
-                return Err(ExifError::JpegWithoutExif(
-                    "EXIF preamble unrecognized".to_string(),
-                ));
+                return Err(ExifError::JpegWithoutExif("EXIF preamble unrecognized".into()));
             }
 
             // The offset and size of the block, excluding size and 'Exif\0\0'.
@@ -105,14 +93,10 @@ pub fn find_embedded_tiff_in_jpeg(contents: &[u8]) -> Result<(usize, usize), Exi
         }
         if marker == 0xffda {
             // last marker
-            return Err(ExifError::JpegWithoutExif(
-                "Last mark found and no EXIF".to_string(),
-            ));
+            return Err(ExifError::JpegWithoutExif("Last mark found and no EXIF".into()));
         }
         offset += size;
     }
 
-    Err(ExifError::JpegWithoutExif(
-        "Scan past EOF and no EXIF found".to_string(),
-    ))
+    Err(ExifError::JpegWithoutExif("Scan past EOF and no EXIF found".into()))
 }
