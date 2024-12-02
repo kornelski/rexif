@@ -1,6 +1,5 @@
 use super::lowlevel::*;
 use super::types::*;
-use num::Float;
 use std::cell::RefCell;
 use std::fmt;
 use std::fmt::Display;
@@ -98,11 +97,16 @@ pub(crate) fn tag_value_new(f: &IfdEntry) -> Option<TagValue> {
 }
 
 /// Compare two vectors of floats, and always consider NaN == NaN.
-fn vec_cmp<F: Float>(va: &[F], vb: &[F]) -> bool {
-    (va.len() == vb.len()) &&  // zip stops at the shortest
-     va.iter()
-       .zip(vb)
-       .all(|(a,b)| (a.is_nan() && b.is_nan() || (a == b)))
+fn vec_cmp_f32(va: &[f32], vb: &[f32]) -> bool {
+    (va.len() == vb.len()) && // zip stops at the shortest
+     va.iter().zip(vb)
+       .all(|(a, b)| (a == b) || (a.is_nan() && b.is_nan()))
+}
+
+fn vec_cmp_f64(va: &[f64], vb: &[f64]) -> bool {
+    (va.len() == vb.len()) && // zip stops at the shortest
+     va.iter().zip(vb)
+       .all(|(a, b)| (a == b) || (a.is_nan() && b.is_nan()))
 }
 
 /// Check if `left` == `right`. If the `left` and `right` are float vectors, this returns `true` even
@@ -110,8 +114,8 @@ fn vec_cmp<F: Float>(va: &[F], vb: &[F]) -> bool {
 /// values at the same positions).
 pub(crate) fn tag_value_eq(left: &TagValue, right: &TagValue) -> bool {
     match (left, right) {
-        (TagValue::F32(x), TagValue::F32(y)) => vec_cmp(x, y),
-        (TagValue::F64(x), TagValue::F64(y)) => vec_cmp(x, y),
+        (TagValue::F32(x), TagValue::F32(y)) => vec_cmp_f32(x, y),
+        (TagValue::F64(x), TagValue::F64(y)) => vec_cmp_f64(x, y),
         (x, y) => x == y,
     }
 }
