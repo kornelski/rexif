@@ -1,0 +1,2 @@
+# Output of rustfmt causes too many inconsistencies to be used unconditionally
+disable-all-formatting = true
