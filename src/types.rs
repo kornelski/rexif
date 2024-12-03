@@ -77,11 +77,11 @@ impl ExifData {
         assert!(ifd1.is_empty());
 
         // Serialize the number of directory entries in this IFD.
-        if self.le {
-            serialized.extend(&(ifd0.len() as u16).to_le_bytes());
+        serialized.extend(&if self.le {
+            (ifd0.len() as u16).to_le_bytes()
         } else {
-            serialized.extend(&(ifd0.len() as u16).to_be_bytes());
-        };
+            (ifd0.len() as u16).to_be_bytes()
+        });
 
         // The position of the data in an Exif Offset entry.
         let mut exif_ifd_pointer = None;
@@ -162,11 +162,11 @@ impl ExifData {
         };
 
         // Serialize the number of directory entries in this IFD
-        if self.le {
-            serialized.extend(&(entries.len() as u16).to_le_bytes());
+        serialized.extend(&if self.le {
+            (entries.len() as u16).to_le_bytes()
         } else {
-            serialized.extend(&(entries.len() as u16).to_be_bytes());
-        }
+            (entries.len() as u16).to_be_bytes()
+        });
 
         // Write the offset of this IFD in IFD-0.
         let pos = pos.ok_or(ExifError::MissingExifOffset)?;
@@ -284,25 +284,25 @@ impl IfdEntry {
         }
 
         // Serialize the tag (2 bytes)
-        if self.le {
-            serialized.extend(&self.tag.to_le_bytes());
+        serialized.extend(&if self.le {
+            self.tag.to_le_bytes()
         } else {
-            serialized.extend(&self.tag.to_be_bytes());
-        };
+            self.tag.to_be_bytes()
+        });
 
         // Serialize the data format (2 bytes)
-        if self.le {
-            serialized.extend(&(self.format as u16).to_le_bytes());
+        serialized.extend(&if self.le {
+            (self.format as u16).to_le_bytes()
         } else {
-            serialized.extend(&(self.format as u16).to_be_bytes());
-        }
+            (self.format as u16).to_be_bytes()
+        });
 
         // Serialize the number of components (4 bytes)
-        if self.le {
-            serialized.extend(&self.count.to_le_bytes());
+        serialized.extend(&if self.le {
+            self.count.to_le_bytes()
         } else {
-            serialized.extend(&self.count.to_be_bytes());
-        }
+            self.count.to_be_bytes()
+        });
 
         // Serialize the data value/offset to data value (4 bytes)
         if self.in_ifd() {
