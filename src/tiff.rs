@@ -67,7 +67,7 @@ pub fn parse_ifd(
     subifd: bool,
     le: bool,
     count: u16,
-    contents: &[u8]
+    contents: &[u8],
 ) -> Option<(Vec<IfdEntry>, usize)> {
     let mut entries: Vec<IfdEntry> = Vec::new();
 
