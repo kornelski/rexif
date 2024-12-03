@@ -31,23 +31,17 @@ pub(crate) fn detect_type(contents: &[u8]) -> FileType {
         return FileType::Unknown;
     }
 
-    if contents[0] == 0xff && contents[1] == 0xd8 && contents[2] == 0xff && // contents[3] == 0xe0 &&
-        contents[6] == b'J' && contents[7] == b'F' && contents[8] == b'I' && contents[9] == b'F' &&
-            contents[10] == 0
-    {
+    if contents[0..3] == [0xff, 0xd8, 0xff] && &contents[6..11] == b"JFIF\0" {
         return FileType::JPEG;
     }
-    if contents[0] == 0xff && contents[1] == 0xd8 && contents[2] == 0xff && // contents[3] == 0xe0
-        contents[6] == b'E' && contents[7] == b'x' && contents[8] == b'i' && contents[9] == b'f' &&
-            contents[10] == 0
-    {
+    if contents[0..3] == [0xff, 0xd8, 0xff] && &contents[6..11] == b"Exif\0" {
         return FileType::JPEG;
     }
-    if contents[0] == b'I' && contents[1] == b'I' && contents[2] == 42 && contents[3] == 0 {
+    if contents.starts_with(&[b'I', b'I', 42, 0]) {
         /* TIFF little-endian */
         return FileType::TIFF;
     }
-    if contents[0] == b'M' && contents[1] == b'M' && contents[2] == 0 && contents[3] == 42 {
+    if contents.starts_with(&[b'M', b'M', 0, 42]) {
         /* TIFF big-endian */
         return FileType::TIFF;
     }
