@@ -24,8 +24,7 @@ match rexif::parse_file(&file_name) {
         }
     },
     Err(e) => {
-        eprintln!("Error in {}: {} {}", &file_name,
-            Error::description(&e), e.extra).unwrap();
+        eprintln!("Error in {file_name}: {e}");
     }
 }
 ```

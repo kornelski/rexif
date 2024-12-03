@@ -18,19 +18,18 @@
 //!
 //! Code sample lightly edited from src/bin.rs:
 //!
-//! ```
-//! use std::error::Error;
-//!
+//! ```rust,no_run
 //! let file_name = "foo.jpg";
-//! match rexif::parse_file(&file_name) {
+//! match rexif::parse_file(file_name) {
 //!     Ok(exif) => {
 //!         println!("{} {} exif entries: {}", file_name, exif.mime, exif.entries.len());
+
 //!         for entry in &exif.entries {
 //!             println!("\t{}: {}", entry.tag, entry.value_more_readable);
 //!         }
 //!     },
 //!     Err(e) => {
-//!         eprintln!("Error in {}: {}", &file_name, e)
+//!         eprintln!("Error in {file_name}: {e}");
 //!     },
 //! }
 //! ```
