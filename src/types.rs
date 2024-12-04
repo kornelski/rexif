@@ -115,11 +115,16 @@ impl ExifData {
         // Patch the offsets serialized above.
         for patch in &data_patches {
             // The position of the data pointed to by the IFD entries serialized above.
-            let bytes =
-                if self.le { (serialized.len() as u32).to_le_bytes() } else { (serialized.len() as u32).to_be_bytes() };
+            let bytes = if self.le {
+                (serialized.len() as u32).to_le_bytes()
+            } else {
+                (serialized.len() as u32).to_be_bytes()
+            };
 
             serialized.extend(patch.data);
-            for (place, byte) in serialized.iter_mut().skip(patch.offset_pos as usize).zip(bytes.iter()) {
+            for (place, byte) in
+                serialized.iter_mut().skip(patch.offset_pos as usize).zip(bytes.iter())
+            {
                 *place = *byte;
             }
         }
@@ -144,8 +149,11 @@ impl ExifData {
         entries: Vec<&ExifEntry>,
         pos: Option<usize>,
     ) -> Result<(), ExifError> {
-        let bytes =
-            if self.le { (serialized.len() as u32).to_le_bytes() } else { (serialized.len() as u32).to_be_bytes() };
+        let bytes = if self.le {
+            (serialized.len() as u32).to_le_bytes()
+        } else {
+            (serialized.len() as u32).to_be_bytes()
+        };
 
         // Serialize the number of directory entries in this IFD
         if self.le {
@@ -169,10 +177,15 @@ impl ExifData {
         serialized.extend(&[0, 0, 0, 0]);
         for patch in &data_patches {
             // The position of the data pointed to by the IFD entries serialized above.
-            let bytes =
-                if self.le { (serialized.len() as u32).to_le_bytes() } else { (serialized.len() as u32).to_be_bytes() };
+            let bytes = if self.le {
+                (serialized.len() as u32).to_le_bytes()
+            } else {
+                (serialized.len() as u32).to_be_bytes()
+            };
             serialized.extend(patch.data);
-            for (place, byte) in serialized.iter_mut().skip(patch.offset_pos as usize).zip(bytes.iter()) {
+            for (place, byte) in
+                serialized.iter_mut().skip(patch.offset_pos as usize).zip(bytes.iter())
+            {
                 *place = *byte;
             }
         }
@@ -244,12 +257,16 @@ pub struct IfdEntry {
 // entries should still be considered equal.
 impl PartialEq for IfdEntry {
     fn eq(&self, other: &Self) -> bool {
-        let data_eq =
-            if self.in_ifd() && !self.tag == ExifTag::ExifOffset as u16 && !self.tag == ExifTag::GPSOffset as u16 {
-                self.data == other.data && self.ifd_data == other.ifd_data && self.ext_data == other.ext_data
-            } else {
-                true
-            };
+        let data_eq = if self.in_ifd()
+            && !self.tag == ExifTag::ExifOffset as u16
+            && !self.tag == ExifTag::GPSOffset as u16
+        {
+            self.data == other.data
+                && self.ifd_data == other.ifd_data
+                && self.ext_data == other.ext_data
+        } else {
+            true
+        };
 
         self.namespace == other.namespace
             && self.tag == other.tag
@@ -609,7 +626,10 @@ impl PartialEq for ExifEntry {
         // Two entries can be equal even if they do not point to the same offset.
         let value_eq = match self.tag {
             ExifTag::ExifOffset | ExifTag::GPSOffset => true,
-            _ => self.value_more_readable == other.value_more_readable && tag_value_eq(&self.value, &other.value),
+            _ => {
+                self.value_more_readable == other.value_more_readable
+                    && tag_value_eq(&self.value, &other.value)
+            }
         };
 
         self.namespace == other.namespace

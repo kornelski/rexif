@@ -58,7 +58,12 @@ pub(crate) fn read_irational(le: bool, raw: &[u8]) -> Option<IRational> {
 }
 
 #[inline(always)]
-fn read_elements<T>(size: u8, count: u32, raw: &[u8], convert: impl Fn(&[u8]) -> T) -> Option<Vec<T>> {
+fn read_elements<T>(
+    size: u8,
+    count: u32,
+    raw: &[u8],
+    convert: impl Fn(&[u8]) -> T,
+) -> Option<Vec<T>> {
     let count = count as usize;
     let size = size as usize;
     let byte_size = size.checked_mul(count)?;

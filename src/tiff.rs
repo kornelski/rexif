@@ -10,7 +10,11 @@ type InExifResult = Result<(), ExifError>;
 /// Parse of raw IFD entry into EXIF data, if it is of a known type, and returns
 /// an `ExifEntry` object. If the tag is unknown, the enumeration is set to `UnknownToMe`,
 /// but the raw information of tag is still available in the ifd member.
-pub(crate) fn parse_exif_entry(ifd: IfdEntry, warnings: &mut Vec<String>, kind: IfdKind) -> ExifEntry {
+pub(crate) fn parse_exif_entry(
+    ifd: IfdEntry,
+    warnings: &mut Vec<String>,
+    kind: IfdKind,
+) -> ExifEntry {
     let (tag, unit, format, min_count, max_count, more_readable) = tag_to_exif(ifd.tag);
     let value = match tag_value_new(&ifd) {
         Some(v) => v,
@@ -38,7 +42,9 @@ pub(crate) fn parse_exif_entry(ifd: IfdEntry, warnings: &mut Vec<String>, kind: 
     // 3) Str type must not have a definite length
     if (((tag as u32) & 0xffff) as u16) != e.ifd.tag
         || (min_count == -1
-            && (format != IfdFormat::Ascii && format != IfdFormat::Undefined && format != IfdFormat::Unknown))
+            && (format != IfdFormat::Ascii
+                && format != IfdFormat::Undefined
+                && format != IfdFormat::Unknown))
         || (min_count != -1 && format == IfdFormat::Ascii)
     {
         panic!("Internal error {:x}", e.ifd.tag);
@@ -61,7 +67,12 @@ pub(crate) fn parse_exif_entry(ifd: IfdEntry, warnings: &mut Vec<String>, kind: 
 }
 
 /// Superficial parse of IFD that can't fail
-pub fn parse_ifd(subifd: bool, le: bool, count: u16, contents: &[u8]) -> Option<(Vec<IfdEntry>, usize)> {
+pub fn parse_ifd(
+    subifd: bool,
+    le: bool,
+    count: u16,
+    contents: &[u8],
+) -> Option<(Vec<IfdEntry>, usize)> {
     let mut entries: Vec<IfdEntry> = Vec::new();
 
     for i in 0..count {
@@ -87,7 +98,8 @@ pub fn parse_ifd(subifd: bool, le: bool, count: u16, contents: &[u8]) -> Option<
         entries.push(entry);
     }
 
-    let next_ifd = if subifd { 0 } else { read_u32(le, &contents[count as usize * 12..])? as usize };
+    let next_ifd =
+        if subifd { 0 } else { read_u32(le, &contents[count as usize * 12..])? as usize };
 
     Some((entries, next_ifd))
 }
@@ -112,7 +124,8 @@ fn parse_exif_ifd(
         )));
     }
 
-    let count = read_u16(le, contents.get(offset..).ok_or(ExifError::IfdTruncated)?).ok_or(ExifError::IfdTruncated)?;
+    let count = read_u16(le, contents.get(offset..).ok_or(ExifError::IfdTruncated)?)
+        .ok_or(ExifError::IfdTruncated)?;
     let ifd_length = (count as usize) * 12;
     offset += 2;
 
@@ -136,7 +149,12 @@ fn parse_exif_ifd(
 }
 
 /// Parses IFD0 and looks for `SubIFD` or GPS IFD within IFD0
-pub fn parse_ifds(le: bool, ifd0_offset: usize, contents: &[u8], warnings: &mut Vec<String>) -> ExifEntryResult {
+pub fn parse_ifds(
+    le: bool,
+    ifd0_offset: usize,
+    contents: &[u8],
+    warnings: &mut Vec<String>,
+) -> ExifEntryResult {
     let mut offset = ifd0_offset;
     let mut exif_entries: Vec<ExifEntry> = Vec::new();
 
@@ -197,7 +215,10 @@ pub fn parse_tiff(contents: &[u8], warnings: &mut Vec<String>) -> (ExifEntryResu
     } else if contents[0] == b'M' && contents[1] == b'M' && contents[2] == 0 && contents[3] == 42 {
         /* TIFF big-endian */
     } else {
-        let err = format!("Preamble is {:x} {:x} {:x} {:x}", contents[0], contents[1], contents[2], contents[3]);
+        let err = format!(
+            "Preamble is {:x} {:x} {:x} {:x}",
+            contents[0], contents[1], contents[2], contents[3]
+        );
         return (Err(ExifError::TiffBadPreamble(err)), false);
     }
 

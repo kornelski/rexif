@@ -67,7 +67,9 @@ pub(crate) fn rational_value(_tag: u16, e: &TagValue) -> Option<Cow<'static, str
 
 pub(crate) fn rational_values(_tag: u16, e: &TagValue) -> Option<Cow<'static, str>> {
     match *e {
-        TagValue::URational(ref v) => Some(NumArray::new(v.iter().map(|&x| x.value())).to_string().into()),
+        TagValue::URational(ref v) => {
+            Some(NumArray::new(v.iter().map(|&x| x.value())).to_string().into())
+        }
         _ => None,
     }
 }
@@ -285,7 +287,10 @@ pub(crate) fn gpstimestamp(_tag: u16, e: &TagValue) -> Option<Cow<'static, str>>
             let sec = v.get(2)?;
             let hour = v.first()?;
             let min = v.get(1)?;
-            Some(format!("{:02.0}:{:02.0}:{:04.1} UTC", hour.value(), min.value(), sec.value()).into())
+            Some(
+                format!("{:02.0}:{:02.0}:{:04.1} UTC", hour.value(), min.value(), sec.value())
+                    .into(),
+            )
         }
         _ => None,
     }
@@ -434,7 +439,9 @@ pub(crate) fn apex_ev(_tag: u16, e: &TagValue) -> Option<Cow<'static, str>> {
 
 pub(crate) fn file_source(_tag: u16, e: &TagValue) -> Option<Cow<'static, str>> {
     match *e {
-        TagValue::Undefined(ref v, _) => Some(if !v.is_empty() && v[0] == 3 { "DSC" } else { "Unknown" }.into()),
+        TagValue::Undefined(ref v, _) => {
+            Some(if !v.is_empty() && v[0] == 3 { "DSC" } else { "Unknown" }.into())
+        }
         _ => None,
     }
 }
