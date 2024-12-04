@@ -12,7 +12,7 @@ pub(crate) fn exif_postprocessing(entry: &mut ExifEntry, entries1: &[ExifEntry],
     match entry.tag {
         ExifTag::XResolution | ExifTag::YResolution => {
             if let Some(f) = other_tag(ExifTag::ResolutionUnit, entries1, entries2) {
-                entry.unit = f.value_more_readable.clone();
+                entry.unit.clone_from(&f.value_more_readable);
                 let v = entry.value_more_readable.to_mut();
                 v.push_str(" pixels per ");
                 v.push_str(&f.value_more_readable);
@@ -21,7 +21,7 @@ pub(crate) fn exif_postprocessing(entry: &mut ExifEntry, entries1: &[ExifEntry],
 
         ExifTag::FocalPlaneXResolution | ExifTag::FocalPlaneYResolution => {
             if let Some(f) = other_tag(ExifTag::FocalPlaneResolutionUnit, entries1, entries2) {
-                entry.unit = f.value_more_readable.clone();
+                entry.unit.clone_from(&f.value_more_readable);
                 let v = entry.value_more_readable.to_mut();
                 v.push_str(" pixels per ");
                 v.push_str(&f.value_more_readable);
@@ -75,7 +75,7 @@ pub(crate) fn exif_postprocessing(entry: &mut ExifEntry, entries1: &[ExifEntry],
 
         ExifTag::GPSDestDistance => {
             if let Some(f) = other_tag(ExifTag::GPSDestDistanceRef, entries1, entries2) {
-                entry.unit = f.value_more_readable.clone();
+                entry.unit.clone_from(&f.value_more_readable);
                 let v = entry.value_more_readable.to_mut();
                 v.push(' ');
                 v.push_str(&f.value_more_readable);
@@ -84,7 +84,7 @@ pub(crate) fn exif_postprocessing(entry: &mut ExifEntry, entries1: &[ExifEntry],
 
         ExifTag::GPSSpeed => {
             if let Some(f) = other_tag(ExifTag::GPSSpeedRef, entries1, entries2) {
-                entry.unit = f.value_more_readable.clone();
+                entry.unit.clone_from(&f.value_more_readable);
                 let v = entry.value_more_readable.to_mut();
                 v.push(' ');
                 v.push_str(&f.value_more_readable);

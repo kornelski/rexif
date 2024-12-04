@@ -70,7 +70,9 @@ impl ExifData {
 
         // IFD-1 contains the thumbnail. For now, the parser discards IFD-1, so its serialization
         // has not yet been implemented.
-        assert!(ifd1.is_empty());
+        if !ifd1.is_empty() {
+            return Err(ExifError::UnsupportedNamespace);
+        }
 
         // Serialize the number of directory entries in this IFD.
         serialized.extend(&if self.le {
