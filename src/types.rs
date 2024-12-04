@@ -583,19 +583,43 @@ pub enum IfdFormat {
 /// Structure that represents a parsed EXIF tag.
 #[derive(Clone, Debug)]
 pub struct ExifEntry {
-    /// Namespace of the tag. If Standard (0x0000), it is an EXIF tag defined in the
-    /// official standard. Other namespaces accomodate manufacturer-specific tags that
-    /// may be embedded in `MarkerNote` blob tag.
+    /// See [`ExifEntry::namespace()`]
     pub namespace: Namespace,
     /// Low-level IFD entry that contains the EXIF tag. The client may look into this
     /// structure to get tag's raw data, or to parse the tag herself if `tag` is `UnknownToMe`.
+    /// See [`ExifEntry::ifd()`]
     pub ifd: IfdEntry,
+    /// See [`ExifEntry::tag()`]
+    pub tag: ExifTag,
+    /// See [`ExifEntry::value()`]
+    pub value: TagValue,
+    /// See [`ExifEntry::unit()`]
+    pub unit: Cow<'static, str>,
+    /// See [`ExifEntry::value_more_readable()`]
+    pub value_more_readable: Cow<'static, str>,
+    pub kind: IfdKind,
+}
+
+impl ExifEntry {
+    /// Namespace of the tag. If Standard (0x0000), it is an EXIF tag defined in the
+    /// official standard. Other namespaces accomodate manufacturer-specific tags that
+    /// may be embedded in `MarkerNote` blob tag.
+    pub fn namespace(&self) -> Namespace {
+        self.namespace
+    }
+
     /// EXIF tag type as an enumeration. If `UnknownToMe`, the crate did not know the
     /// tag in detail, and parsing will be incomplete. The client may read into
     /// `ifd` to discover more about the unparsed tag.
-    pub tag: ExifTag,
+    pub fn tag(&self) -> ExifTag {
+        self.tag
+    }
+
     /// EXIF tag value as an enumeration. Behaves as a "variant" value
-    pub value: TagValue,
+    pub fn value(&self) -> TagValue {
+        self.value.clone()
+    }
+
     /// Unit of the value, if applicable. If tag is `UnknownToMe`, unit will be empty.
     /// If the tag has been parsed and it is indeed unitless, it will be `"none"`.
     ///
@@ -604,13 +628,21 @@ pub struct ExifEntry {
     /// a GPS latitude is a triplet of rational values, so unit is D/M/S, even though
     /// `value_more_readable` contains a single string with all three parts
     /// combined.
-    pub unit: Cow<'static, str>,
+    pub fn unit(&self) -> Cow<'static, str> {
+        self.unit.clone()
+    }
+
     /// Human-readable and "pretty" version of `value`.
     /// Enumerations and tuples are interpreted and combined. If `value`
     /// has a unit, it is also added.
     /// If tag is `UnknownToMe`, this member contains tag ID.
-    pub value_more_readable: Cow<'static, str>,
-    pub kind: IfdKind,
+    pub fn value_more_readable(&self) -> Cow<'static, str> {
+        self.value_more_readable.clone()
+    }
+
+    pub fn kind(&self) -> IfdKind {
+        self.kind
+    }
 }
 
 impl PartialEq for ExifEntry {
