@@ -120,17 +120,17 @@ impl Error for ExifError {
 impl Display for ExifError {
     #[cold]
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        match *self {
-            ExifError::IoError(ref e) => e.fmt(f),
-            ExifError::FileTypeUnknown => f.write_str("File type unknown"),
-            ExifError::JpegWithoutExif(ref s) => write!(f, "JPEG without EXIF section: {s}"),
-            ExifError::TiffTruncated => f.write_str("TIFF truncated at start"),
-            ExifError::TiffBadPreamble(ref s) => write!(f, "TIFF with bad preamble: {s}"),
-            ExifError::IfdTruncated => f.write_str("TIFF IFD truncated"),
-            ExifError::ExifIfdTruncated(ref s) => write!(f, "TIFF Exif IFD truncated: {s}"),
-            ExifError::ExifIfdEntryNotFound => f.write_str("TIFF Exif IFD not found"),
-            ExifError::UnsupportedNamespace => f.write_str("Only standar namespace can be serialized"),
-            ExifError::MissingExifOffset => f.write_str("Expected to have seen ExifOffset tagin IFD0"),
+        match self {
+            Self::IoError(e) => e.fmt(f),
+            Self::FileTypeUnknown => f.write_str("File type unknown"),
+            Self::JpegWithoutExif(s) => write!(f, "JPEG without EXIF section: {s}"),
+            Self::TiffTruncated => f.write_str("TIFF truncated at start"),
+            Self::TiffBadPreamble(s) => write!(f, "TIFF with bad preamble: {s}"),
+            Self::IfdTruncated => f.write_str("TIFF IFD truncated"),
+            Self::ExifIfdTruncated(s) => write!(f, "TIFF Exif IFD truncated: {s}"),
+            Self::ExifIfdEntryNotFound => f.write_str("TIFF Exif IFD not found"),
+            Self::UnsupportedNamespace => f.write_str("Only standar namespace can be serialized"),
+            Self::MissingExifOffset => f.write_str("Expected to have seen ExifOffset tagin IFD0"),
         }
     }
 }
@@ -146,20 +146,20 @@ impl fmt::Display for TagValue {
     #[cold]
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            TagValue::Ascii(s) => f.write_str(s),
-            TagValue::U16(a) => write!(f, "{}", NumArray::new(a)),
-            TagValue::I16(a) => write!(f, "{}", NumArray::new(a)),
-            TagValue::U8(a) => write!(f, "{}", NumArray::new(a)),
-            TagValue::I8(a) => write!(f, "{}", NumArray::new(a)),
-            TagValue::U32(a) => write!(f, "{}", NumArray::new(a)),
-            TagValue::I32(a) => write!(f, "{}", NumArray::new(a)),
-            TagValue::F32(a) => write!(f, "{}", NumArray::new(a)),
-            TagValue::F64(a) => write!(f, "{}", NumArray::new(a)),
-            TagValue::URational(a) => write!(f, "{}", NumArray::new(a)),
-            TagValue::IRational(a) => write!(f, "{}", NumArray::new(a)),
-            TagValue::Undefined(a, _) => write!(f, "{}", NumArray::new(a)),
-            TagValue::Unknown(a, _) => write!(f, "<unknown {}>", NumArray::new(a)),
-            TagValue::Invalid(a, ..) => write!(f, "<invalid {}>", NumArray::new(a)),
+            Self::Ascii(s) => f.write_str(s),
+            Self::U16(a) => write!(f, "{}", NumArray::new(a)),
+            Self::I16(a) => write!(f, "{}", NumArray::new(a)),
+            Self::U8(a) => write!(f, "{}", NumArray::new(a)),
+            Self::I8(a) => write!(f, "{}", NumArray::new(a)),
+            Self::U32(a) => write!(f, "{}", NumArray::new(a)),
+            Self::I32(a) => write!(f, "{}", NumArray::new(a)),
+            Self::F32(a) => write!(f, "{}", NumArray::new(a)),
+            Self::F64(a) => write!(f, "{}", NumArray::new(a)),
+            Self::URational(a) => write!(f, "{}", NumArray::new(a)),
+            Self::IRational(a) => write!(f, "{}", NumArray::new(a)),
+            Self::Undefined(a, _) => write!(f, "{}", NumArray::new(a)),
+            Self::Unknown(a, _) => write!(f, "<unknown {}>", NumArray::new(a)),
+            Self::Invalid(a, ..) => write!(f, "<invalid {}>", NumArray::new(a)),
         }
     }
 }

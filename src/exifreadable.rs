@@ -17,8 +17,8 @@ pub(crate) fn strpass(_tag: u16, e: &TagValue) -> Option<Cow<'static, str>> {
 
 /// Indicates which one of the parameters of ISO12232 is used for `PhotographicSensitivity`
 pub(crate) fn sensitivity_type(tag: u16, e: &TagValue) -> Option<Cow<'static, str>> {
-    match *e {
-        TagValue::U16(ref v) => Some(match v.first()? {
+    match e {
+        TagValue::U16(v) => Some(match v.first()? {
             0 => "Unknown",
             1 => "Standard output sensitivity (SOS)",
             2 => "Recommended exposure index (REI)",
@@ -34,8 +34,8 @@ pub(crate) fn sensitivity_type(tag: u16, e: &TagValue) -> Option<Cow<'static, st
 }
 
 pub(crate) fn orientation(tag: u16, e: &TagValue) -> Option<Cow<'static, str>> {
-    match *e {
-        TagValue::U16(ref v) => Some(
+    match e {
+        TagValue::U16(v) => Some(
             match v.first()? {
                 1 => "Straight",
                 3 => "Upside down",
@@ -59,8 +59,8 @@ pub(crate) fn rational_value(_tag: u16, e: &TagValue) -> Option<Cow<'static, str
 }
 
 pub(crate) fn rational_values(_tag: u16, e: &TagValue) -> Option<Cow<'static, str>> {
-    match *e {
-        TagValue::URational(ref v) => {
+    match e {
+        TagValue::URational(v) => {
             Some(NumArray::new(v.iter().map(|&x| x.value())).to_string().into())
         },
         _ => None,
@@ -68,8 +68,8 @@ pub(crate) fn rational_values(_tag: u16, e: &TagValue) -> Option<Cow<'static, st
 }
 
 pub(crate) fn resolution_unit(tag: u16, e: &TagValue) -> Option<Cow<'static, str>> {
-    match *e {
-        TagValue::U16(ref v) => Some(
+    match e {
+        TagValue::U16(v) => Some(
             match v.first()? {
                 1 => "Unitless",
                 2 => "in",
@@ -83,8 +83,8 @@ pub(crate) fn resolution_unit(tag: u16, e: &TagValue) -> Option<Cow<'static, str
 }
 
 pub(crate) fn exposure_time(_tag: u16, e: &TagValue) -> Option<Cow<'static, str>> {
-    match *e {
-        TagValue::URational(ref v) => {
+    match e {
+        TagValue::URational(v) => {
             let r = v.first()?;
             Some(if r.numerator == 1 && r.denominator > 1 {
                 // traditional 1/x exposure time
@@ -102,15 +102,15 @@ pub(crate) fn exposure_time(_tag: u16, e: &TagValue) -> Option<Cow<'static, str>
 }
 
 pub(crate) fn f_number(_tag: u16, e: &TagValue) -> Option<Cow<'static, str>> {
-    match *e {
-        TagValue::URational(ref v) => Some(format!("f/{:.1}", v.first()?.value()).into()),
+    match e {
+        TagValue::URational(v) => Some(format!("f/{:.1}", v.first()?.value()).into()),
         _ => None,
     }
 }
 
 pub(crate) fn exposure_program(tag: u16, e: &TagValue) -> Option<Cow<'static, str>> {
-    match *e {
-        TagValue::U16(ref v) => Some(
+    match e {
+        TagValue::U16(v) => Some(
             match v.first()? {
                 1 => "Manual control",
                 2 => "Program control",
@@ -129,29 +129,29 @@ pub(crate) fn exposure_program(tag: u16, e: &TagValue) -> Option<Cow<'static, st
 }
 
 pub(crate) fn focal_length(_tag: u16, e: &TagValue) -> Option<Cow<'static, str>> {
-    match *e {
-        TagValue::URational(ref v) => Some(format!("{} mm", v.first()?.value()).into()),
+    match e {
+        TagValue::URational(v) => Some(format!("{} mm", v.first()?.value()).into()),
         _ => None,
     }
 }
 
 pub(crate) fn focal_length_35(_tag: u16, e: &TagValue) -> Option<Cow<'static, str>> {
-    match *e {
-        TagValue::U16(ref v) => Some(format!("{} mm", v.first()?).into()),
+    match e {
+        TagValue::U16(v) => Some(format!("{} mm", v.first()?).into()),
         _ => None,
     }
 }
 
 pub(crate) fn meters(_tag: u16, e: &TagValue) -> Option<Cow<'static, str>> {
-    match *e {
-        TagValue::URational(ref v) => Some(format!("{:.1} m", v.first()?.value()).into()),
+    match e {
+        TagValue::URational(v) => Some(format!("{:.1} m", v.first()?.value()).into()),
         _ => None,
     }
 }
 
 pub(crate) fn iso_speeds(_tag: u16, e: &TagValue) -> Option<Cow<'static, str>> {
-    match *e {
-        TagValue::U16(ref v) => Some(
+    match e {
+        TagValue::U16(v) => Some(
             if v.len() == 1 {
                 format!("ISO {}", v[0])
             } else if v.len() == 2 || v.len() == 3 {
@@ -166,8 +166,8 @@ pub(crate) fn iso_speeds(_tag: u16, e: &TagValue) -> Option<Cow<'static, str>> {
 }
 
 pub(crate) fn dms(_tag: u16, e: &TagValue) -> Option<Cow<'static, str>> {
-    match *e {
-        TagValue::URational(ref v) if v.len() >= 3 => {
+    match e {
+        TagValue::URational(v) if v.len() >= 3 => {
             let deg = v[0];
             let min = v[1];
             let sec = v[2];
@@ -188,8 +188,8 @@ pub(crate) fn dms(_tag: u16, e: &TagValue) -> Option<Cow<'static, str>> {
 }
 
 pub(crate) fn gps_alt_ref(_tag: u16, e: &TagValue) -> Option<Cow<'static, str>> {
-    match *e {
-        TagValue::U8(ref v) => Some(
+    match e {
+        TagValue::U8(v) => Some(
             match v.first()? {
                 0 => "Above sea level",
                 1 => "Below sea level",
@@ -202,8 +202,8 @@ pub(crate) fn gps_alt_ref(_tag: u16, e: &TagValue) -> Option<Cow<'static, str>> 
 }
 
 pub(crate) fn gpsdestdistanceref(_tag: u16, e: &TagValue) -> Option<Cow<'static, str>> {
-    match *e {
-        TagValue::Ascii(ref v) => {
+    match e {
+        TagValue::Ascii(v) => {
             Some(if v == "N" {
                 "kn".into()
             } else if v == "K" {
@@ -219,15 +219,15 @@ pub(crate) fn gpsdestdistanceref(_tag: u16, e: &TagValue) -> Option<Cow<'static,
 }
 
 pub(crate) fn gpsdestdistance(_tag: u16, e: &TagValue) -> Option<Cow<'static, str>> {
-    match *e {
-        TagValue::URational(ref v) => Some(format!("{:.3}", v.first()?.value()).into()),
+    match e {
+        TagValue::URational(v) => Some(format!("{:.3}", v.first()?.value()).into()),
         _ => None,
     }
 }
 
 pub(crate) fn gpsspeedref(_tag: u16, e: &TagValue) -> Option<Cow<'static, str>> {
-    match *e {
-        TagValue::Ascii(ref v) => {
+    match e {
+        TagValue::Ascii(v) => {
             Some(if v == "N" {
                 "kn".into()
             } else if v == "K" {
@@ -243,15 +243,15 @@ pub(crate) fn gpsspeedref(_tag: u16, e: &TagValue) -> Option<Cow<'static, str>> 
 }
 
 pub(crate) fn gpsspeed(_tag: u16, e: &TagValue) -> Option<Cow<'static, str>> {
-    match *e {
-        TagValue::URational(ref v) => Some(format!("{:.1}", v.first()?.value()).into()),
+    match e {
+        TagValue::URational(v) => Some(format!("{:.1}", v.first()?.value()).into()),
         _ => None,
     }
 }
 
 pub(crate) fn gpsbearingref(_tag: u16, e: &TagValue) -> Option<Cow<'static, str>> {
-    match *e {
-        TagValue::Ascii(ref v) => {
+    match e {
+        TagValue::Ascii(v) => {
             Some(if v == "T" {
                 "True bearing".into()
             } else if v == "M" {
@@ -265,15 +265,15 @@ pub(crate) fn gpsbearingref(_tag: u16, e: &TagValue) -> Option<Cow<'static, str>
 }
 
 pub(crate) fn gpsbearing(_tag: u16, e: &TagValue) -> Option<Cow<'static, str>> {
-    match *e {
-        TagValue::URational(ref v) => Some(format!("{:.2}°", v.first()?.value()).into()),
+    match e {
+        TagValue::URational(v) => Some(format!("{:.2}°", v.first()?.value()).into()),
         _ => None,
     }
 }
 
 pub(crate) fn gpstimestamp(_tag: u16, e: &TagValue) -> Option<Cow<'static, str>> {
-    match *e {
-        TagValue::URational(ref v) => {
+    match e {
+        TagValue::URational(v) => {
             let sec = v.get(2)?;
             let hour = v.first()?;
             let min = v.get(1)?;
@@ -289,8 +289,8 @@ pub(crate) fn gpstimestamp(_tag: u16, e: &TagValue) -> Option<Cow<'static, str>>
 }
 
 pub(crate) fn gpsdiff(tag: u16, e: &TagValue) -> Option<Cow<'static, str>> {
-    match *e {
-        TagValue::U16(ref v) => Some(match v.first()? {
+    match e {
+        TagValue::U16(v) => Some(match v.first()? {
             0 => "Measurement without differential correction".into(),
             1 => "Differential correction applied".into(),
             n => format!("Unknown ({tag:04x}={n})").into(),
@@ -300,8 +300,8 @@ pub(crate) fn gpsdiff(tag: u16, e: &TagValue) -> Option<Cow<'static, str>> {
 }
 
 pub(crate) fn gpsstatus(_tag: u16, e: &TagValue) -> Option<Cow<'static, str>> {
-    match *e {
-        TagValue::Ascii(ref v) => {
+    match e {
+        TagValue::Ascii(v) => {
             Some(if v == "A" {
                 "Measurement in progress".into()
             } else if v == "V" {
@@ -315,8 +315,8 @@ pub(crate) fn gpsstatus(_tag: u16, e: &TagValue) -> Option<Cow<'static, str>> {
 }
 
 pub(crate) fn gpsmeasuremode(_tag: u16, e: &TagValue) -> Option<Cow<'static, str>> {
-    match *e {
-        TagValue::Ascii(ref v) => {
+    match e {
+        TagValue::Ascii(v) => {
             Some(if v == "2" {
                 "2-dimension".into()
             } else if v == "3" {
@@ -333,8 +333,8 @@ pub(crate) fn gpsmeasuremode(_tag: u16, e: &TagValue) -> Option<Cow<'static, str
 /// by EXIF standard to be ASCII-compatible. This function accepts UTF-8
 /// strings, should they be accepted by EXIF standard in the future.
 pub(crate) fn undefined_as_ascii(_tag: u16, e: &TagValue) -> Option<Cow<'static, str>> {
-    match *e {
-        TagValue::Undefined(ref v, _) => Some(String::from_utf8_lossy(&v[..]).into_owned().into()),
+    match e {
+        TagValue::Undefined(v, _) => Some(String::from_utf8_lossy(&v[..]).into_owned().into()),
         _ => None,
     }
 }
@@ -342,8 +342,8 @@ pub(crate) fn undefined_as_ascii(_tag: u16, e: &TagValue) -> Option<Cow<'static,
 /// Outputs an Undefined tag as an array of bytes. Appropriate for tags
 /// that are opaque and small-sized
 pub(crate) fn undefined_as_u8(_tag: u16, e: &TagValue) -> Option<Cow<'static, str>> {
-    match *e {
-        TagValue::Undefined(ref v, _) => Some(NumArray::new(v).to_string().into()),
+    match e {
+        TagValue::Undefined(v, _) => Some(NumArray::new(v).to_string().into()),
         _ => None,
     }
 }
@@ -359,8 +359,8 @@ pub(crate) fn undefined_as_encoded_string(_tag: u16, e: &TagValue) -> Option<Cow
     // "UNICODE\0"
     static UNICODE: [u8; 8] = [0x55, 0x4e, 0x49, 0x43, 0x4f, 0x44, 0x45, 0x00];
 
-    match *e {
-        TagValue::Undefined(ref v, le) => {
+    match e {
+        TagValue::Undefined(v, le) => {
             Some(if v.len() < 8 {
                 format!("String w/ truncated preamble {}", NumArray::new(v))
             } else if v[0..8] == ASC[..] {
@@ -371,7 +371,7 @@ pub(crate) fn undefined_as_encoded_string(_tag: u16, e: &TagValue) -> Option<Cow
                 let v8 = &v[8..];
                 // reinterpret as vector of u16
                 let v16_size = (v8.len() / 2) as u32;
-                let v16 = read_u16_array(le, v16_size, v8)?;
+                let v16 = read_u16_array(*le, v16_size, v8)?;
                 String::from_utf16_lossy(&v16)
             } else {
                 format!("String w/ undefined encoding {}", NumArray::new(v))
@@ -383,29 +383,29 @@ pub(crate) fn undefined_as_encoded_string(_tag: u16, e: &TagValue) -> Option<Cow
 
 /// Prints an opaque and long Undefined tag simply as as "blob", noting its length
 pub(crate) fn undefined_as_blob(_tag: u16, e: &TagValue) -> Option<Cow<'static, str>> {
-    match *e {
-        TagValue::Undefined(ref v, _) => Some(format!("Blob of {} bytes", v.len()).into()),
+    match e {
+        TagValue::Undefined(v, _) => Some(format!("Blob of {} bytes", v.len()).into()),
         _ => None,
     }
 }
 
 pub(crate) fn apex_tv(_tag: u16, e: &TagValue) -> Option<Cow<'static, str>> {
-    match *e {
-        TagValue::IRational(ref v) => Some(format!("{:.1} Tv APEX", v.first()?.value()).into()),
+    match e {
+        TagValue::IRational(v) => Some(format!("{:.1} Tv APEX", v.first()?.value()).into()),
         _ => None,
     }
 }
 
 pub(crate) fn apex_av(_tag: u16, e: &TagValue) -> Option<Cow<'static, str>> {
-    match *e {
-        TagValue::URational(ref v) => Some(format!("{:.1} Av APEX", v.first()?.value()).into()),
+    match e {
+        TagValue::URational(v) => Some(format!("{:.1} Av APEX", v.first()?.value()).into()),
         _ => None,
     }
 }
 
 pub(crate) fn apex_brightness(_tag: u16, e: &TagValue) -> Option<Cow<'static, str>> {
-    match *e {
-        TagValue::IRational(ref v) => {
+    match e {
+        TagValue::IRational(v) => {
             // numerator 0xffffffff = unknown
             Some(if v.first()?.numerator == -1 {
                 "Unknown".into()
@@ -418,15 +418,15 @@ pub(crate) fn apex_brightness(_tag: u16, e: &TagValue) -> Option<Cow<'static, st
 }
 
 pub(crate) fn apex_ev(_tag: u16, e: &TagValue) -> Option<Cow<'static, str>> {
-    match *e {
-        TagValue::IRational(ref v) => Some(format!("{:.2} EV APEX", v.first()?.value()).into()),
+    match e {
+        TagValue::IRational(v) => Some(format!("{:.2} EV APEX", v.first()?.value()).into()),
         _ => None,
     }
 }
 
 pub(crate) fn file_source(_tag: u16, e: &TagValue) -> Option<Cow<'static, str>> {
-    match *e {
-        TagValue::Undefined(ref v, _) => Some(
+    match e {
+        TagValue::Undefined(v, _) => Some(
             if !v.is_empty() && v[0] == 3 {
                 "DSC"
             } else {
@@ -439,15 +439,15 @@ pub(crate) fn file_source(_tag: u16, e: &TagValue) -> Option<Cow<'static, str>> 
 }
 
 pub(crate) fn flash_energy(_tag: u16, e: &TagValue) -> Option<Cow<'static, str>> {
-    match *e {
-        TagValue::URational(ref v) => Some(format!("{} BCPS", v.first()?.value()).into()),
+    match e {
+        TagValue::URational(v) => Some(format!("{} BCPS", v.first()?.value()).into()),
         _ => None,
     }
 }
 
 pub(crate) fn metering_mode(tag: u16, e: &TagValue) -> Option<Cow<'static, str>> {
-    match *e {
-        TagValue::U16(ref v) => Some(
+    match e {
+        TagValue::U16(v) => Some(
             match v.first()? {
                 0 => "Unknown",
                 1 => "Average",
@@ -466,8 +466,8 @@ pub(crate) fn metering_mode(tag: u16, e: &TagValue) -> Option<Cow<'static, str>>
 }
 
 pub(crate) fn light_source(tag: u16, e: &TagValue) -> Option<Cow<'static, str>> {
-    match *e {
-        TagValue::U16(ref v) => Some(
+    match e {
+        TagValue::U16(v) => Some(
             match v.first()? {
                 0 => "Unknown",
                 1 => "Daylight",
@@ -499,8 +499,8 @@ pub(crate) fn light_source(tag: u16, e: &TagValue) -> Option<Cow<'static, str>> 
 }
 
 pub(crate) fn color_space(tag: u16, e: &TagValue) -> Option<Cow<'static, str>> {
-    match *e {
-        TagValue::U16(ref v) => Some(
+    match e {
+        TagValue::U16(v) => Some(
             match v.first()? {
                 1 => "sRGB",
                 65535 => "Uncalibrated",
@@ -513,8 +513,8 @@ pub(crate) fn color_space(tag: u16, e: &TagValue) -> Option<Cow<'static, str>> {
 }
 
 pub(crate) fn flash(_tag: u16, e: &TagValue) -> Option<Cow<'static, str>> {
-    match *e {
-        TagValue::U16(ref v) => {
+    match e {
+        TagValue::U16(v) => {
             let n = v.first()?;
             let mut b0 = "Did not fire. ";
             let mut b12 = "";
@@ -559,8 +559,8 @@ pub(crate) fn flash(_tag: u16, e: &TagValue) -> Option<Cow<'static, str>> {
 }
 
 pub(crate) fn subject_area(_tag: u16, e: &TagValue) -> Option<Cow<'static, str>> {
-    match *e {
-        TagValue::U16(ref v) => Some(match v.len() {
+    match e {
+        TagValue::U16(v) => Some(match v.len() {
             2 => format!("at pixel {},{}", v[0], v[1]),
             3 => format!("at center {},{} radius {}", v[0], v[1], v[2]),
             4 => format!(
@@ -574,15 +574,15 @@ pub(crate) fn subject_area(_tag: u16, e: &TagValue) -> Option<Cow<'static, str>>
 }
 
 pub(crate) fn subject_location(_tag: u16, e: &TagValue) -> Option<Cow<'static, str>> {
-    match *e {
-        TagValue::U16(ref v) if v.len() >= 2 => Some(format!("at pixel {},{}", v[0], v[1]).into()),
+    match e {
+        TagValue::U16(v) if v.len() >= 2 => Some(format!("at pixel {},{}", v[0], v[1]).into()),
         _ => None,
     }
 }
 
 pub(crate) fn sharpness(tag: u16, e: &TagValue) -> Option<Cow<'static, str>> {
-    match *e {
-        TagValue::U16(ref v) => Some(
+    match e {
+        TagValue::U16(v) => Some(
             match v.first()? {
                 0 => "Normal",
                 1 => "Soft",
@@ -596,8 +596,8 @@ pub(crate) fn sharpness(tag: u16, e: &TagValue) -> Option<Cow<'static, str>> {
 }
 
 pub(crate) fn saturation(tag: u16, e: &TagValue) -> Option<Cow<'static, str>> {
-    match *e {
-        TagValue::U16(ref v) => Some(
+    match e {
+        TagValue::U16(v) => Some(
             match v.first()? {
                 0 => "Normal",
                 1 => "Low",
@@ -611,8 +611,8 @@ pub(crate) fn saturation(tag: u16, e: &TagValue) -> Option<Cow<'static, str>> {
 }
 
 pub(crate) fn contrast(tag: u16, e: &TagValue) -> Option<Cow<'static, str>> {
-    match *e {
-        TagValue::U16(ref v) => Some(
+    match e {
+        TagValue::U16(v) => Some(
             match v.first()? {
                 0 => "Normal",
                 1 => "Soft",
@@ -626,8 +626,8 @@ pub(crate) fn contrast(tag: u16, e: &TagValue) -> Option<Cow<'static, str>> {
 }
 
 pub(crate) fn gain_control(tag: u16, e: &TagValue) -> Option<Cow<'static, str>> {
-    match *e {
-        TagValue::U16(ref v) => Some(
+    match e {
+        TagValue::U16(v) => Some(
             match v.first()? {
                 0 => "None",
                 1 => "Low gain up",
@@ -643,8 +643,8 @@ pub(crate) fn gain_control(tag: u16, e: &TagValue) -> Option<Cow<'static, str>> 
 }
 
 pub(crate) fn exposure_mode(tag: u16, e: &TagValue) -> Option<Cow<'static, str>> {
-    match *e {
-        TagValue::U16(ref v) => Some(
+    match e {
+        TagValue::U16(v) => Some(
             match v.first()? {
                 0 => "Auto exposure",
                 1 => "Manual exposure",
@@ -658,8 +658,8 @@ pub(crate) fn exposure_mode(tag: u16, e: &TagValue) -> Option<Cow<'static, str>>
 }
 
 pub(crate) fn scene_capture_type(tag: u16, e: &TagValue) -> Option<Cow<'static, str>> {
-    match *e {
-        TagValue::U16(ref v) => Some(
+    match e {
+        TagValue::U16(v) => Some(
             match v.first()? {
                 0 => "Standard",
                 1 => "Landscape",
@@ -674,8 +674,8 @@ pub(crate) fn scene_capture_type(tag: u16, e: &TagValue) -> Option<Cow<'static, 
 }
 
 pub(crate) fn scene_type(tag: u16, e: &TagValue) -> Option<Cow<'static, str>> {
-    match *e {
-        TagValue::Undefined(ref v, _) => Some(
+    match e {
+        TagValue::Undefined(v, _) => Some(
             match v.first()? {
                 1 => "Directly photographed image",
                 n => return Some(format!("Unknown ({tag:04x}={n})").into()),
@@ -687,8 +687,8 @@ pub(crate) fn scene_type(tag: u16, e: &TagValue) -> Option<Cow<'static, str>> {
 }
 
 pub(crate) fn white_balance_mode(tag: u16, e: &TagValue) -> Option<Cow<'static, str>> {
-    match *e {
-        TagValue::U16(ref v) => Some(
+    match e {
+        TagValue::U16(v) => Some(
             match v.first()? {
                 0 => "Auto",
                 1 => "Manual",
@@ -701,8 +701,8 @@ pub(crate) fn white_balance_mode(tag: u16, e: &TagValue) -> Option<Cow<'static, 
 }
 
 pub(crate) fn sensing_method(tag: u16, e: &TagValue) -> Option<Cow<'static, str>> {
-    match *e {
-        TagValue::U16(ref v) => Some(
+    match e {
+        TagValue::U16(v) => Some(
             match v.first()? {
                 1 => "Not defined",
                 2 => "One-chip color area sensor",
@@ -720,8 +720,8 @@ pub(crate) fn sensing_method(tag: u16, e: &TagValue) -> Option<Cow<'static, str>
 }
 
 pub(crate) fn custom_rendered(tag: u16, e: &TagValue) -> Option<Cow<'static, str>> {
-    match *e {
-        TagValue::U16(ref v) => Some(
+    match e {
+        TagValue::U16(v) => Some(
             match v.first()? {
                 0 => "Normal",
                 1 => "Custom",
@@ -734,8 +734,8 @@ pub(crate) fn custom_rendered(tag: u16, e: &TagValue) -> Option<Cow<'static, str
 }
 
 pub(crate) fn subject_distance_range(tag: u16, e: &TagValue) -> Option<Cow<'static, str>> {
-    match *e {
-        TagValue::U16(ref v) => Some(
+    match e {
+        TagValue::U16(v) => Some(
             match v.first()? {
                 0 => "Unknown",
                 1 => "Macro",
@@ -750,8 +750,8 @@ pub(crate) fn subject_distance_range(tag: u16, e: &TagValue) -> Option<Cow<'stat
 }
 
 pub(crate) fn lens_spec(_tag: u16, e: &TagValue) -> Option<Cow<'static, str>> {
-    match *e {
-        TagValue::URational(ref v) if v.len() >= 4 => {
+    match e {
+        TagValue::URational(v) if v.len() >= 4 => {
             let f0 = v[0].value();
             let f1 = v[1].value();
             let a0 = v[2].value();
