@@ -35,16 +35,17 @@ pub(crate) fn sensitivity_type(tag: u16, e: &TagValue) -> Option<Cow<'static, st
 
 pub(crate) fn orientation(tag: u16, e: &TagValue) -> Option<Cow<'static, str>> {
     match *e {
-        TagValue::U16(ref v) => {
-            Some(match v.first()? {
+        TagValue::U16(ref v) => Some(
+            match v.first()? {
                 1 => "Straight",
                 3 => "Upside down",
                 6 => "Rotated to left",
                 8 => "Rotated to right",
                 9 => "Undefined",
                 n => return Some(format!("Unknown ({tag:04x}={n})").into()),
-            }.into())
-        },
+            }
+            .into(),
+        ),
         _ => None,
     }
 }
@@ -68,14 +69,15 @@ pub(crate) fn rational_values(_tag: u16, e: &TagValue) -> Option<Cow<'static, st
 
 pub(crate) fn resolution_unit(tag: u16, e: &TagValue) -> Option<Cow<'static, str>> {
     match *e {
-        TagValue::U16(ref v) => {
-            Some(match v.first()? {
+        TagValue::U16(ref v) => Some(
+            match v.first()? {
                 1 => "Unitless",
                 2 => "in",
                 3 => "cm",
                 n => return Some(format!("Unknown ({tag:04x}={n})").into()),
-            }.into())
-        },
+            }
+            .into(),
+        ),
         _ => None,
     }
 }
@@ -108,8 +110,8 @@ pub(crate) fn f_number(_tag: u16, e: &TagValue) -> Option<Cow<'static, str>> {
 
 pub(crate) fn exposure_program(tag: u16, e: &TagValue) -> Option<Cow<'static, str>> {
     match *e {
-        TagValue::U16(ref v) => {
-            Some(match v.first()? {
+        TagValue::U16(ref v) => Some(
+            match v.first()? {
                 1 => "Manual control",
                 2 => "Program control",
                 3 => "Aperture priority",
@@ -119,8 +121,9 @@ pub(crate) fn exposure_program(tag: u16, e: &TagValue) -> Option<Cow<'static, st
                 7 => "Portrait mode",
                 8 => "Landscape mode",
                 n => return Some(format!("Unknown ({tag:04x}={n})").into()),
-            }.into())
-        },
+            }
+            .into(),
+        ),
         _ => None,
     }
 }
@@ -148,15 +151,16 @@ pub(crate) fn meters(_tag: u16, e: &TagValue) -> Option<Cow<'static, str>> {
 
 pub(crate) fn iso_speeds(_tag: u16, e: &TagValue) -> Option<Cow<'static, str>> {
     match *e {
-        TagValue::U16(ref v) => {
-            Some(if v.len() == 1 {
+        TagValue::U16(ref v) => Some(
+            if v.len() == 1 {
                 format!("ISO {}", v[0])
             } else if v.len() == 2 || v.len() == 3 {
                 format!("ISO {} latitude {}", v[0], v[1])
             } else {
                 format!("Unknown ({})", NumArray::new(v))
-            }.into())
-        },
+            }
+            .into(),
+        ),
         _ => None,
     }
 }
@@ -185,13 +189,14 @@ pub(crate) fn dms(_tag: u16, e: &TagValue) -> Option<Cow<'static, str>> {
 
 pub(crate) fn gps_alt_ref(_tag: u16, e: &TagValue) -> Option<Cow<'static, str>> {
     match *e {
-        TagValue::U8(ref v) => {
-            Some(match v.first()? {
+        TagValue::U8(ref v) => Some(
+            match v.first()? {
                 0 => "Above sea level",
                 1 => "Below sea level",
                 n => return Some(format!("Unknown, assumed below sea level ({n})").into()),
-            }.into())
-        },
+            }
+            .into(),
+        ),
         _ => None,
     }
 }
@@ -285,13 +290,11 @@ pub(crate) fn gpstimestamp(_tag: u16, e: &TagValue) -> Option<Cow<'static, str>>
 
 pub(crate) fn gpsdiff(tag: u16, e: &TagValue) -> Option<Cow<'static, str>> {
     match *e {
-        TagValue::U16(ref v) => {
-            Some(match v.first()? {
-                0 => "Measurement without differential correction".into(),
-                1 => "Differential correction applied".into(),
-                n => format!("Unknown ({tag:04x}={n})").into(),
-            })
-        },
+        TagValue::U16(ref v) => Some(match v.first()? {
+            0 => "Measurement without differential correction".into(),
+            1 => "Differential correction applied".into(),
+            n => format!("Unknown ({tag:04x}={n})").into(),
+        }),
         _ => None,
     }
 }
@@ -423,13 +426,14 @@ pub(crate) fn apex_ev(_tag: u16, e: &TagValue) -> Option<Cow<'static, str>> {
 
 pub(crate) fn file_source(_tag: u16, e: &TagValue) -> Option<Cow<'static, str>> {
     match *e {
-        TagValue::Undefined(ref v, _) => {
-            Some(if !v.is_empty() && v[0] == 3 {
+        TagValue::Undefined(ref v, _) => Some(
+            if !v.is_empty() && v[0] == 3 {
                 "DSC"
             } else {
                 "Unknown"
-            }.into())
-        },
+            }
+            .into(),
+        ),
         _ => None,
     }
 }
@@ -443,8 +447,8 @@ pub(crate) fn flash_energy(_tag: u16, e: &TagValue) -> Option<Cow<'static, str>>
 
 pub(crate) fn metering_mode(tag: u16, e: &TagValue) -> Option<Cow<'static, str>> {
     match *e {
-        TagValue::U16(ref v) => {
-            Some(match v.first()? {
+        TagValue::U16(ref v) => Some(
+            match v.first()? {
                 0 => "Unknown",
                 1 => "Average",
                 2 => "Center-weighted average",
@@ -454,16 +458,17 @@ pub(crate) fn metering_mode(tag: u16, e: &TagValue) -> Option<Cow<'static, str>>
                 6 => "Partial",
                 255 => "Other",
                 n => return Some(format!("Unknown ({tag:04x}={n})").into()),
-            }.into())
-        },
+            }
+            .into(),
+        ),
         _ => None,
     }
 }
 
 pub(crate) fn light_source(tag: u16, e: &TagValue) -> Option<Cow<'static, str>> {
     match *e {
-        TagValue::U16(ref v) => {
-            Some(match v.first()? {
+        TagValue::U16(ref v) => Some(
+            match v.first()? {
                 0 => "Unknown",
                 1 => "Daylight",
                 2 => "Fluorescent",
@@ -486,21 +491,23 @@ pub(crate) fn light_source(tag: u16, e: &TagValue) -> Option<Cow<'static, str>> 
                 24 => "ISO studio tungsten",
                 255 => "Other",
                 n => return Some(format!("Unknown ({tag:04x}={n})").into()),
-            }.into())
-        },
+            }
+            .into(),
+        ),
         _ => None,
     }
 }
 
 pub(crate) fn color_space(tag: u16, e: &TagValue) -> Option<Cow<'static, str>> {
     match *e {
-        TagValue::U16(ref v) => {
-            Some(match v.first()? {
+        TagValue::U16(ref v) => Some(
+            match v.first()? {
                 1 => "sRGB",
                 65535 => "Uncalibrated",
                 n => return Some(format!("Unknown ({tag:04x}={n})").into()),
-            }.into())
-        },
+            }
+            .into(),
+        ),
         _ => None,
     }
 }
@@ -575,120 +582,128 @@ pub(crate) fn subject_location(_tag: u16, e: &TagValue) -> Option<Cow<'static, s
 
 pub(crate) fn sharpness(tag: u16, e: &TagValue) -> Option<Cow<'static, str>> {
     match *e {
-        TagValue::U16(ref v) => {
-            Some(match v.first()? {
+        TagValue::U16(ref v) => Some(
+            match v.first()? {
                 0 => "Normal",
                 1 => "Soft",
                 2 => "Hard",
                 n => return Some(format!("Unknown ({tag:04x}={n})").into()),
-            }.into())
-        },
+            }
+            .into(),
+        ),
         _ => None,
     }
 }
 
 pub(crate) fn saturation(tag: u16, e: &TagValue) -> Option<Cow<'static, str>> {
     match *e {
-        TagValue::U16(ref v) => {
-            Some(match v.first()? {
+        TagValue::U16(ref v) => Some(
+            match v.first()? {
                 0 => "Normal",
                 1 => "Low",
                 2 => "High",
                 n => return Some(format!("Unknown ({tag:04x}={n})").into()),
-            }.into())
-        },
+            }
+            .into(),
+        ),
         _ => None,
     }
 }
 
 pub(crate) fn contrast(tag: u16, e: &TagValue) -> Option<Cow<'static, str>> {
     match *e {
-        TagValue::U16(ref v) => {
-            Some(match v.first()? {
+        TagValue::U16(ref v) => Some(
+            match v.first()? {
                 0 => "Normal",
                 1 => "Soft",
                 2 => "Hard",
                 n => return Some(format!("Unknown ({tag:04x}={n})").into()),
-            }.into())
-        },
+            }
+            .into(),
+        ),
         _ => None,
     }
 }
 
 pub(crate) fn gain_control(tag: u16, e: &TagValue) -> Option<Cow<'static, str>> {
     match *e {
-        TagValue::U16(ref v) => {
-            Some(match v.first()? {
+        TagValue::U16(ref v) => Some(
+            match v.first()? {
                 0 => "None",
                 1 => "Low gain up",
                 2 => "High gain up",
                 3 => "Low gain down",
                 4 => "High gain down",
                 n => return Some(format!("Unknown ({tag:04x}={n})").into()),
-            }.into())
-        },
+            }
+            .into(),
+        ),
         _ => None,
     }
 }
 
 pub(crate) fn exposure_mode(tag: u16, e: &TagValue) -> Option<Cow<'static, str>> {
     match *e {
-        TagValue::U16(ref v) => {
-            Some(match v.first()? {
+        TagValue::U16(ref v) => Some(
+            match v.first()? {
                 0 => "Auto exposure",
                 1 => "Manual exposure",
                 2 => "Auto bracket",
                 n => return Some(format!("Unknown ({tag:04x}={n})").into()),
-            }.into())
-        },
+            }
+            .into(),
+        ),
         _ => None,
     }
 }
 
 pub(crate) fn scene_capture_type(tag: u16, e: &TagValue) -> Option<Cow<'static, str>> {
     match *e {
-        TagValue::U16(ref v) => {
-            Some(match v.first()? {
+        TagValue::U16(ref v) => Some(
+            match v.first()? {
                 0 => "Standard",
                 1 => "Landscape",
                 2 => "Portrait",
                 3 => "Night scene",
                 n => return Some(format!("Unknown ({tag:04x}={n})").into()),
-            }.into())
-        },
+            }
+            .into(),
+        ),
         _ => None,
     }
 }
 
 pub(crate) fn scene_type(tag: u16, e: &TagValue) -> Option<Cow<'static, str>> {
     match *e {
-        TagValue::Undefined(ref v, _) => {
-            Some(match v.first()? {
+        TagValue::Undefined(ref v, _) => Some(
+            match v.first()? {
                 1 => "Directly photographed image",
                 n => return Some(format!("Unknown ({tag:04x}={n})").into()),
-            }.into())
-        },
+            }
+            .into(),
+        ),
         _ => None,
     }
 }
 
 pub(crate) fn white_balance_mode(tag: u16, e: &TagValue) -> Option<Cow<'static, str>> {
     match *e {
-        TagValue::U16(ref v) => {
-            Some(match v.first()? {
+        TagValue::U16(ref v) => Some(
+            match v.first()? {
                 0 => "Auto",
                 1 => "Manual",
                 n => return Some(format!("Unknown ({tag:04x}={n})").into()),
-            }.into())
-        },
+            }
+            .into(),
+        ),
         _ => None,
     }
 }
 
 pub(crate) fn sensing_method(tag: u16, e: &TagValue) -> Option<Cow<'static, str>> {
     match *e {
-        TagValue::U16(ref v) => {
-            Some(match v.first()? {
+        TagValue::U16(ref v) => Some(
+            match v.first()? {
                 1 => "Not defined",
                 2 => "One-chip color area sensor",
                 3 => "Two-chip color area sensor",
@@ -697,36 +712,39 @@ pub(crate) fn sensing_method(tag: u16, e: &TagValue) -> Option<Cow<'static, str>
                 7 => "Trilinear sensor",
                 8 => "Color sequential linear sensor",
                 n => return Some(format!("Unknown ({tag:04x}={n})").into()),
-            }.into())
-        },
+            }
+            .into(),
+        ),
         _ => None,
     }
 }
 
 pub(crate) fn custom_rendered(tag: u16, e: &TagValue) -> Option<Cow<'static, str>> {
     match *e {
-        TagValue::U16(ref v) => {
-            Some(match v.first()? {
+        TagValue::U16(ref v) => Some(
+            match v.first()? {
                 0 => "Normal",
                 1 => "Custom",
                 n => return Some(format!("Unknown ({tag:04x}={n})").into()),
-            }.into())
-        },
+            }
+            .into(),
+        ),
         _ => None,
     }
 }
 
 pub(crate) fn subject_distance_range(tag: u16, e: &TagValue) -> Option<Cow<'static, str>> {
     match *e {
-        TagValue::U16(ref v) => {
-            Some(match v.first()? {
+        TagValue::U16(ref v) => Some(
+            match v.first()? {
                 0 => "Unknown",
                 1 => "Macro",
                 2 => "Close view",
                 3 => "Distant view",
                 n => return Some(format!("Unknown ({tag:04x}={n})").into()),
-            }.into())
-        },
+            }
+            .into(),
+        ),
         _ => None,
     }
 }

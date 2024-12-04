@@ -34,11 +34,7 @@ impl ExifData {
     /// through the `le` attribute).
     pub fn serialize(&self) -> Result<Vec<u8>, ExifError> {
         // Select the right TIFF header based on the endianness.
-        let tiff_header = if self.le {
-            INTEL_TIFF_HEADER
-        } else {
-            MOTOROLA_TIFF_HEADER
-        };
+        let tiff_header = if self.le { INTEL_TIFF_HEADER } else { MOTOROLA_TIFF_HEADER };
 
         // The result buffer.
         let mut serialized = vec![];
@@ -267,8 +263,11 @@ impl PartialEq for IfdEntry {
             true
         };
 
-        self.namespace == other.namespace && self.tag == other.tag && self.count == other.count &&
-            data_eq && self.le == other.le
+        self.namespace == other.namespace
+            && self.tag == other.tag
+            && self.count == other.count
+            && data_eq
+            && self.le == other.le
     }
 }
 
@@ -627,8 +626,12 @@ impl PartialEq for ExifEntry {
             },
         };
 
-        self.namespace == other.namespace && self.ifd == other.ifd && self.tag == other.tag &&
-            self.unit == other.unit && self.kind == other.kind && value_eq
+        self.namespace == other.namespace
+            && self.ifd == other.ifd
+            && self.tag == other.tag
+            && self.unit == other.unit
+            && self.kind == other.kind
+            && value_eq
     }
 }
 
