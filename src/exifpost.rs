@@ -2,8 +2,7 @@ use super::types::{ExifEntry, ExifTag, TagValue};
 
 /// Find a tag of given type
 fn other_tag<'a>(tag: ExifTag, entries1: &'a [ExifEntry], entries2: &'a [ExifEntry]) -> Option<&'a ExifEntry> {
-    entries1.iter().find(|entry| entry.tag == tag)
-    .or_else(|| entries2.iter().find(|entry| entry.tag == tag))
+    entries1.iter().find(|entry| entry.tag == tag).or_else(|| entries2.iter().find(|entry| entry.tag == tag))
 }
 
 /// Does postprocessing in tags that depend on other tags to have a complete interpretation
@@ -17,7 +16,7 @@ pub(crate) fn exif_postprocessing(entry: &mut ExifEntry, entries1: &[ExifEntry],
                 v.push_str(" pixels per ");
                 v.push_str(&f.value_more_readable);
             }
-        },
+        }
 
         ExifTag::FocalPlaneXResolution | ExifTag::FocalPlaneYResolution => {
             if let Some(f) = other_tag(ExifTag::FocalPlaneResolutionUnit, entries1, entries2) {
@@ -26,7 +25,7 @@ pub(crate) fn exif_postprocessing(entry: &mut ExifEntry, entries1: &[ExifEntry],
                 v.push_str(" pixels per ");
                 v.push_str(&f.value_more_readable);
             }
-        },
+        }
 
         ExifTag::GPSLatitude => {
             if let Some(f) = other_tag(ExifTag::GPSLatitudeRef, entries1, entries2) {
@@ -34,7 +33,7 @@ pub(crate) fn exif_postprocessing(entry: &mut ExifEntry, entries1: &[ExifEntry],
                 v.push(' ');
                 v.push_str(&f.value_more_readable);
             }
-        },
+        }
 
         ExifTag::GPSLongitude => {
             if let Some(f) = other_tag(ExifTag::GPSLongitudeRef, entries1, entries2) {
@@ -42,7 +41,7 @@ pub(crate) fn exif_postprocessing(entry: &mut ExifEntry, entries1: &[ExifEntry],
                 v.push(' ');
                 v.push_str(&f.value_more_readable);
             }
-        },
+        }
 
         ExifTag::GPSAltitude => {
             if let Some(f) = other_tag(ExifTag::GPSAltitudeRef, entries1, entries2) {
@@ -55,7 +54,7 @@ pub(crate) fn exif_postprocessing(entry: &mut ExifEntry, entries1: &[ExifEntry],
                     entry.value_more_readable.to_mut().push_str(" below sea level");
                 }
             }
-        },
+        }
 
         ExifTag::GPSDestLatitude => {
             if let Some(f) = other_tag(ExifTag::GPSDestLatitudeRef, entries1, entries2) {
@@ -63,7 +62,7 @@ pub(crate) fn exif_postprocessing(entry: &mut ExifEntry, entries1: &[ExifEntry],
                 v.push(' ');
                 v.push_str(&f.value_more_readable);
             }
-        },
+        }
 
         ExifTag::GPSDestLongitude => {
             if let Some(f) = other_tag(ExifTag::GPSDestLongitudeRef, entries1, entries2) {
@@ -71,7 +70,7 @@ pub(crate) fn exif_postprocessing(entry: &mut ExifEntry, entries1: &[ExifEntry],
                 v.push(' ');
                 v.push_str(&f.value_more_readable);
             }
-        },
+        }
 
         ExifTag::GPSDestDistance => {
             if let Some(f) = other_tag(ExifTag::GPSDestDistanceRef, entries1, entries2) {
@@ -80,7 +79,7 @@ pub(crate) fn exif_postprocessing(entry: &mut ExifEntry, entries1: &[ExifEntry],
                 v.push(' ');
                 v.push_str(&f.value_more_readable);
             }
-        },
+        }
 
         ExifTag::GPSSpeed => {
             if let Some(f) = other_tag(ExifTag::GPSSpeedRef, entries1, entries2) {
@@ -89,7 +88,7 @@ pub(crate) fn exif_postprocessing(entry: &mut ExifEntry, entries1: &[ExifEntry],
                 v.push(' ');
                 v.push_str(&f.value_more_readable);
             }
-        },
+        }
         _ => (),
     }
 }

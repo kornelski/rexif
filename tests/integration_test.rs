@@ -36,8 +36,10 @@ fn test_parse_simple_morotola_jpeg() {
     ];
     check_tags(&exif.entries, expected_tags);
 
-    assert!(exif.entries.iter().all(|e| e.namespace == Namespace::Standard),
-            "Expected all tags to be from the standard namespace");
+    assert!(
+        exif.entries.iter().all(|e| e.namespace == Namespace::Standard),
+        "Expected all tags to be from the standard namespace"
+    );
 }
 
 #[test]
@@ -109,15 +111,10 @@ fn cmp_serialized_exif_with_original<P: AsRef<Path>>(file: P) -> Result<(), std:
 
 #[test]
 fn test_jpeg_exif_serialization() -> Result<(), std::io::Error> {
-    let jpegs = glob(
-        Path::new(JPEG_TEST_DIR)
-            .join(JPEG_PATTERN)
-            .to_str()
-            .expect("Path is not valid unicode."),
-    )
-    .expect("Failed to read glob pattern")
-    .filter_map(Result::ok)
-    .collect::<Vec<_>>();
+    let jpegs = glob(Path::new(JPEG_TEST_DIR).join(JPEG_PATTERN).to_str().expect("Path is not valid unicode."))
+        .expect("Failed to read glob pattern")
+        .filter_map(Result::ok)
+        .collect::<Vec<_>>();
 
     for jpeg in jpegs {
         cmp_serialized_exif_with_original(&jpeg)?;
@@ -128,15 +125,10 @@ fn test_jpeg_exif_serialization() -> Result<(), std::io::Error> {
 
 #[test]
 fn test_tiff_exif_serialization() -> Result<(), std::io::Error> {
-    let tiffs = glob(
-        Path::new(TIFF_TEST_DIR)
-            .join(TIFF_PATTERN)
-            .to_str()
-            .expect("Path is not valid unicode."),
-    )
-    .expect("Failed to read glob pattern")
-    .filter_map(Result::ok)
-    .collect::<Vec<_>>();
+    let tiffs = glob(Path::new(TIFF_TEST_DIR).join(TIFF_PATTERN).to_str().expect("Path is not valid unicode."))
+        .expect("Failed to read glob pattern")
+        .filter_map(Result::ok)
+        .collect::<Vec<_>>();
 
     for tiff in tiffs {
         cmp_serialized_exif_with_original(&tiff)?;

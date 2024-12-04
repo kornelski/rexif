@@ -73,7 +73,9 @@ pub fn find_embedded_tiff_in_jpeg(contents: &[u8]) -> Result<(usize, usize), Exi
         let size = (contents[offset] as usize) * 256 + (contents[offset + 1] as usize);
 
         if size < 2 {
-            return Err(ExifError::JpegWithoutExif("JPEG marker size must be at least 2 (because of the size word)".into()));
+            return Err(ExifError::JpegWithoutExif(
+                "JPEG marker size must be at least 2 (because of the size word)".into(),
+            ));
         }
         if contents.len() < (offset + size) {
             return Err(ExifError::JpegWithoutExif("JPEG truncated in marker body".into()));

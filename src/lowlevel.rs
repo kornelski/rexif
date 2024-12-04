@@ -5,44 +5,28 @@ use std::convert::TryInto;
 #[inline(always)]
 pub(crate) fn read_u16(le: bool, raw: &[u8]) -> Option<u16> {
     let bytes = raw.get(..2)?.try_into().ok()?;
-    Some(if le {
-        u16::from_le_bytes(bytes)
-    } else {
-        u16::from_be_bytes(bytes)
-    })
+    Some(if le { u16::from_le_bytes(bytes) } else { u16::from_be_bytes(bytes) })
 }
 
 /// Read value from a stream of bytes
 #[inline(always)]
 pub(crate) fn read_i16(le: bool, raw: &[u8]) -> Option<i16> {
     let bytes = raw.get(..2)?.try_into().ok()?;
-    Some(if le {
-        i16::from_le_bytes(bytes)
-    } else {
-        i16::from_be_bytes(bytes)
-    })
+    Some(if le { i16::from_le_bytes(bytes) } else { i16::from_be_bytes(bytes) })
 }
 
 /// Read value from a stream of bytes
 #[inline(always)]
 pub(crate) fn read_u32(le: bool, raw: &[u8]) -> Option<u32> {
     let bytes = raw.get(..4)?.try_into().ok()?;
-    Some(if le {
-        u32::from_le_bytes(bytes)
-    } else {
-        u32::from_be_bytes(bytes)
-    })
+    Some(if le { u32::from_le_bytes(bytes) } else { u32::from_be_bytes(bytes) })
 }
 
 /// Read value from a stream of bytes
 #[inline(always)]
 pub(crate) fn read_i32(le: bool, raw: &[u8]) -> Option<i32> {
     let bytes = raw.get(..4)?.try_into().ok()?;
-    Some(if le {
-        i32::from_le_bytes(bytes)
-    } else {
-        i32::from_be_bytes(bytes)
-    })
+    Some(if le { i32::from_le_bytes(bytes) } else { i32::from_be_bytes(bytes) })
 }
 
 /// Read value from a stream of bytes

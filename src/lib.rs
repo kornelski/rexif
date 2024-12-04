@@ -75,21 +75,16 @@ pub fn parse_buffer_quiet(contents: &[u8]) -> (ExifResult, Vec<String>) {
         FileType::Unknown => return (Err(ExifError::FileTypeUnknown), warnings),
         FileType::TIFF => parse_tiff(contents, &mut warnings),
         FileType::JPEG => {
-            match find_embedded_tiff_in_jpeg(contents).map(|(offset, size)| parse_tiff(&contents[offset..offset + size], &mut warnings)) {
+            match find_embedded_tiff_in_jpeg(contents)
+                .map(|(offset, size)| parse_tiff(&contents[offset..offset + size], &mut warnings))
+            {
                 Ok(r) => r,
                 Err(e) => return (Err(e), warnings),
             }
         }
     };
 
-    (
-        entries.map(|entries| ExifData {
-            mime: mime.as_str(),
-            entries,
-            le,
-        }),
-        warnings,
-    )
+    (entries.map(|entries| ExifData { mime: mime.as_str(), entries, le }), warnings)
 }
 
 /// Try to read and parse an open file that is expected to contain an image

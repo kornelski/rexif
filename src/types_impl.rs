@@ -114,8 +114,7 @@ impl IfdEntry {
     }
 }
 
-impl Error for ExifError {
-}
+impl Error for ExifError {}
 
 impl Display for ExifError {
     #[cold]

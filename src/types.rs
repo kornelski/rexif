@@ -34,11 +34,7 @@ impl ExifData {
     /// through the `le` attribute).
     pub fn serialize(&self) -> Result<Vec<u8>, ExifError> {
         // Select the right TIFF header based on the endianness.
-        let tiff_header = if self.le {
-            INTEL_TIFF_HEADER
-        } else {
-            MOTOROLA_TIFF_HEADER
-        };
+        let tiff_header = if self.le { INTEL_TIFF_HEADER } else { MOTOROLA_TIFF_HEADER };
 
         // The result buffer.
         let mut serialized = vec![];
@@ -68,7 +64,7 @@ impl ExifData {
                 IfdKind::Gps => gps.push(e),
                 _ => {
                     // XXX Silently ignore Makernote and Interoperability IFDs
-                },
+                }
             }
         }
 
@@ -119,11 +115,8 @@ impl ExifData {
         // Patch the offsets serialized above.
         for patch in &data_patches {
             // The position of the data pointed to by the IFD entries serialized above.
-            let bytes = if self.le {
-                (serialized.len() as u32).to_le_bytes()
-            } else {
-                (serialized.len() as u32).to_be_bytes()
-            };
+            let bytes =
+                if self.le { (serialized.len() as u32).to_le_bytes() } else { (serialized.len() as u32).to_be_bytes() };
 
             serialized.extend(patch.data);
             for (place, byte) in serialized.iter_mut().skip(patch.offset_pos as usize).zip(bytes.iter()) {
@@ -141,11 +134,7 @@ impl ExifData {
 
         // TODO Makernote, Interoperability IFD, Thumbnail image
 
-        Ok(if self.mime == "image/jpeg" {
-            [EXIF_HEADER, &serialized].concat()
-        } else {
-            serialized
-        })
+        Ok(if self.mime == "image/jpeg" { [EXIF_HEADER, &serialized].concat() } else { serialized })
     }
 
     /// Serialize GPS/Exif IFD entries.
@@ -155,11 +144,8 @@ impl ExifData {
         entries: Vec<&ExifEntry>,
         pos: Option<usize>,
     ) -> Result<(), ExifError> {
-        let bytes = if self.le {
-            (serialized.len() as u32).to_le_bytes()
-        } else {
-            (serialized.len() as u32).to_be_bytes()
-        };
+        let bytes =
+            if self.le { (serialized.len() as u32).to_le_bytes() } else { (serialized.len() as u32).to_be_bytes() };
 
         // Serialize the number of directory entries in this IFD
         if self.le {
@@ -183,11 +169,8 @@ impl ExifData {
         serialized.extend(&[0, 0, 0, 0]);
         for patch in &data_patches {
             // The position of the data pointed to by the IFD entries serialized above.
-            let bytes = if self.le {
-                (serialized.len() as u32).to_le_bytes()
-            } else {
-                (serialized.len() as u32).to_be_bytes()
-            };
+            let bytes =
+                if self.le { (serialized.len() as u32).to_le_bytes() } else { (serialized.len() as u32).to_be_bytes() };
             serialized.extend(patch.data);
             for (place, byte) in serialized.iter_mut().skip(patch.offset_pos as usize).zip(bytes.iter()) {
                 *place = *byte;
@@ -207,10 +190,7 @@ pub(super) struct Patch<'a> {
 impl Patch<'_> {
     #[must_use]
     pub const fn new(offset_pos: u32, data: &[u8]) -> Patch {
-        Patch {
-            offset_pos,
-            data,
-        }
+        Patch { offset_pos, data }
     }
 }
 
@@ -264,14 +244,18 @@ pub struct IfdEntry {
 // entries should still be considered equal.
 impl PartialEq for IfdEntry {
     fn eq(&self, other: &Self) -> bool {
-        let data_eq = if self.in_ifd() && !self.tag == ExifTag::ExifOffset as u16 && !self.tag == ExifTag::GPSOffset as u16 {
-            self.data == other.data && self.ifd_data == other.ifd_data && self.ext_data == other.ext_data
-        } else {
-            true
-        };
+        let data_eq =
+            if self.in_ifd() && !self.tag == ExifTag::ExifOffset as u16 && !self.tag == ExifTag::GPSOffset as u16 {
+                self.data == other.data && self.ifd_data == other.ifd_data && self.ext_data == other.ext_data
+            } else {
+                true
+            };
 
-        self.namespace == other.namespace && self.tag == other.tag && self.count == other.count &&
-            data_eq && self.le == other.le
+        self.namespace == other.namespace
+            && self.tag == other.tag
+            && self.count == other.count
+            && data_eq
+            && self.le == other.le
     }
 }
 
@@ -625,13 +609,15 @@ impl PartialEq for ExifEntry {
         // Two entries can be equal even if they do not point to the same offset.
         let value_eq = match self.tag {
             ExifTag::ExifOffset | ExifTag::GPSOffset => true,
-            _ => {
-                self.value_more_readable == other.value_more_readable && tag_value_eq(&self.value, &other.value)
-            },
+            _ => self.value_more_readable == other.value_more_readable && tag_value_eq(&self.value, &other.value),
         };
 
-        self.namespace == other.namespace && self.ifd == other.ifd && self.tag == other.tag &&
-            self.unit == other.unit && self.kind == other.kind && value_eq
+        self.namespace == other.namespace
+            && self.ifd == other.ifd
+            && self.tag == other.tag
+            && self.unit == other.unit
+            && self.kind == other.kind
+            && value_eq
     }
 }
 

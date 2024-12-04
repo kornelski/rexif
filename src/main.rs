@@ -23,10 +23,10 @@ fn main() {
                         println!("\t{}: {}", entry.tag, entry.value_more_readable);
                     }
                 }
-            },
+            }
             Err(e) => {
                 eprintln!("Error in {}: {}", &arg, e);
-            },
+            }
         }
     }
 }

@@ -1,2 +1,3 @@
-# Output of rustfmt causes too many inconsistencies to be used unconditionally
-disable-all-formatting = true
+max_width = 120
+use_small_heuristics = "Max"
+combine_control_expr = false

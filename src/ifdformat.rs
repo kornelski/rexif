@@ -44,54 +44,54 @@ pub(crate) fn tag_value_new(f: &IfdEntry) -> Option<TagValue> {
             let s = String::from_utf8_lossy(data);
             let s = s.into_owned();
             TagValue::Ascii(s)
-        },
+        }
         IfdFormat::U16 => {
             let a = read_u16_array(f.le, f.count, &f.data)?;
             TagValue::U16(a)
-        },
+        }
         IfdFormat::I16 => {
             let a = read_i16_array(f.le, f.count, &f.data)?;
             TagValue::I16(a)
-        },
+        }
         IfdFormat::U8 => {
             if f.data.len() < f.count as usize {
                 return None;
             }
             TagValue::U8(f.data.clone())
-        },
+        }
         IfdFormat::I8 => {
             let a = read_i8_array(f.count, &f.data)?;
             TagValue::I8(a)
-        },
+        }
         IfdFormat::U32 => {
             let a = read_u32_array(f.le, f.count, &f.data)?;
             TagValue::U32(a)
-        },
+        }
         IfdFormat::I32 => {
             let a = read_i32_array(f.le, f.count, &f.data)?;
             TagValue::I32(a)
-        },
+        }
         IfdFormat::F32 => {
             let a = read_f32_array(f.count, &f.data)?;
             TagValue::F32(a)
-        },
+        }
         IfdFormat::F64 => {
             let a = read_f64_array(f.count, &f.data)?;
             TagValue::F64(a)
-        },
+        }
         IfdFormat::URational => {
             let a = read_urational_array(f.le, f.count, &f.data)?;
             TagValue::URational(a)
-        },
+        }
         IfdFormat::IRational => {
             let a = read_irational_array(f.le, f.count, &f.data)?;
             TagValue::IRational(a)
-        },
+        }
 
         IfdFormat::Undefined => {
             let a = f.data.clone();
             TagValue::Undefined(a, f.le)
-        },
+        }
         _ => TagValue::Unknown(f.data.clone(), f.le),
     })
 }
