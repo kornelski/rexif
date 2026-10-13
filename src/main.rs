@@ -25,7 +25,7 @@ fn main() {
                 }
             },
             Err(e) => {
-                eprintln!("Error in {}: {}", &arg, e);
+                eprintln!("Error in {arg}: {e}");
             },
         }
     }

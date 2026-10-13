@@ -204,7 +204,7 @@ pub(super) struct Patch<'a> {
 
 impl Patch<'_> {
     #[must_use]
-    pub const fn new(offset_pos: u32, data: &[u8]) -> Patch {
+    pub const fn new(offset_pos: u32, data: &[u8]) -> Patch<'_> {
         Patch { offset_pos, data }
     }
 }

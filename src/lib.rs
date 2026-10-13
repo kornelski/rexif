@@ -57,16 +57,6 @@ mod exifreadable;
 /// Parse a byte buffer that should contain a TIFF or JPEG image.
 /// Tries to detect format and parse EXIF data.
 ///
-/// Prints warnings to stderr.
-pub fn parse_buffer(contents: &[u8]) -> ExifResult {
-    let (res, warnings) = parse_buffer_quiet(contents);
-    warnings.into_iter().for_each(|w| eprintln!("{w}"));
-    res
-}
-
-/// Parse a byte buffer that should contain a TIFF or JPEG image.
-/// Tries to detect format and parse EXIF data.
-///
 /// Returns warnings alongside result.
 pub fn parse_buffer_quiet(contents: &[u8]) -> (ExifResult, Vec<String>) {
     let mime = detect_type(contents);
@@ -92,6 +82,18 @@ pub fn parse_buffer_quiet(contents: &[u8]) -> (ExifResult, Vec<String>) {
     )
 }
 
+/// Use [`parse_buffer_quiet`] instead.
+///
+/// Parse a byte buffer that should contain a TIFF or JPEG image.
+/// Tries to detect format and parse EXIF data.
+///
+/// Prints warnings to stderr.
+pub fn parse_buffer(contents: &[u8]) -> ExifResult {
+    let (res, warnings) = parse_buffer_quiet(contents);
+    warnings.into_iter().for_each(|w| eprintln!("{w}"));
+    res
+}
+
 /// Try to read and parse an open file that is expected to contain an image
 pub fn read_file(f: &mut File) -> ExifResult {
     f.seek(SeekFrom::Start(0))?;
@@ -101,7 +103,7 @@ pub fn read_file(f: &mut File) -> ExifResult {
 
     let mut contents: Vec<u8> = Vec::new();
     f.read_to_end(&mut contents)?;
-    parse_buffer(&contents)
+    parse_buffer_quiet(&contents).0
 }
 
 /// Opens an image (passed as a file name), tries to read and parse it.
